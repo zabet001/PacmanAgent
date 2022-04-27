@@ -1,6 +1,7 @@
 package de.fh.stud.p3;
 
 import de.fh.kiServer.agents.Agent;
+import de.fh.kiServer.util.Util;
 import de.fh.pacman.PacmanAgent_2021;
 import de.fh.pacman.PacmanGameResult;
 import de.fh.pacman.PacmanPercept;
@@ -16,8 +17,7 @@ import de.fh.stud.p3.Suchen.Suchfunktionen.Zugangsfilter;
 import java.util.List;
 
 public class MyAgent_P3 extends PacmanAgent_2021 {
-    // Pommes
-    static int i;
+
 
     private List<PacmanAction> actionSequence;
     private Knoten loesungsKnoten;

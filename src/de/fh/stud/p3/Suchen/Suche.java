@@ -2,14 +2,15 @@ package de.fh.stud.p3.Suchen;
 
 import de.fh.kiServer.util.Util;
 import de.fh.stud.p2.Knoten;
-import interfaces.AccessibilityChecker;
-import interfaces.GoalPredicate;
-import interfaces.HeuristicFunction;
+
 
 import javax.swing.*;
 import java.util.*;
 
 public class Suche {
+
+    public static List<Double> RUN_TIMES = new LinkedList<>();
+
 
     public enum SearchStrategy {
         DEPTH_FIRST, BREADTH_FIRST, GREEDY, UCS, A_STAR
@@ -17,16 +18,20 @@ public class Suche {
 
     private void printDebugInfos(SearchStrategy strategy, long startTime, AbstractMap.SimpleEntry<Knoten, Map<String, Integer>> result) {
         double elapsedTime = Util.timeSince(startTime);
-        String report = String.format("Ziel wurde %sgefunden\n" +
-                "Suchalgorithmus: %s\n" +
-                "Zeit: %.2f ms\n", result.getKey() != null ? "" : "nicht ",strategy,elapsedTime);
+        RUN_TIMES.add(elapsedTime);
+
+        StringBuilder report = new StringBuilder(String.format("""
+                Ziel wurde %sgefunden
+                Suchalgorithmus: %s
+                Zeit: %.2f ms
+                """, result.getKey() != null ? "" : "nicht ", strategy, elapsedTime));
         for (Map.Entry<String, Integer> info_value : result.getValue().entrySet()) {
-            report += String.format("%s: %,d\n", info_value.getKey(), info_value.getValue());
+            report.append(String.format("%s: %,d\n", info_value.getKey(), info_value.getValue()));
         }
         System.out.println(report);
         JFrame jf = new JFrame();
         jf.setAlwaysOnTop(true);
-        JOptionPane.showMessageDialog(jf, report);
+        JOptionPane.showMessageDialog(jf, report.toString());
     }
 
     public Knoten start(Knoten startNode, SearchStrategy strategy) {
@@ -40,7 +45,14 @@ public class Suche {
             default:
             	searchResult = informedSearch(startNode, strategy);
         };
-        printDebugInfos(strategy, startTime, searchResult);
+        // printDebugInfos(strategy, startTime, searchResult);
+
+        double elapsedTime = Util.timeSince(startTime);
+        RUN_TIMES.add(elapsedTime);
+        System.out.printf("Laufzeit fuer Durchlauf %d: %.2f",RUN_TIMES.size(),elapsedTime);
+        System.out.printf("Durchschn. Laufzeit: %.2f",RUN_TIMES.stream().reduce(0.0, Double::sum)/RUN_TIMES.size(),elapsedTime);
+
+
         return searchResult.getKey();
     }
 
@@ -62,7 +74,7 @@ public class Suche {
             }
             if (!closedList.contains(expCand)) {
                 closedList.add(expCand);
-                expCand.expand().forEach(child -> openList.add(child));
+                openList.addAll(expCand.expand());
             }
         }
 
@@ -98,33 +110,19 @@ public class Suche {
     }
 
     private Comparator<Knoten> getInsertionCriteria(SearchStrategy strategy) {
-        switch (strategy) {
-            case GREEDY:
-                return Comparator.comparingInt(Knoten::getHeuristic);
-            
-            case UCS:
-                return Comparator.comparingInt(Knoten::getCost);
-            
-            case A_STAR:
-                return Comparator.comparingInt(a -> a.getCost() + a.getHeuristic());
-            
-            default:
-                return null;
-            
-        }
+        return switch (strategy) {
+            case GREEDY -> Comparator.comparingInt(Knoten::getHeuristic);
+            case UCS -> Comparator.comparingInt(Knoten::getCost);
+            case A_STAR -> Comparator.comparingInt(a -> a.getCost() + a.getHeuristic());
+            default -> null;
+        };
     }
 
     private void addToOpenList(SearchStrategy strategy, List<Knoten> openList, Knoten child) {
         switch (strategy) {
-            case DEPTH_FIRST:
-                openList.add(0, child);
-                break;
-            
-            case BREADTH_FIRST:
-                openList.add(child);
-                break;
-            
-		}
+            case DEPTH_FIRST -> openList.add(0, child);
+            case BREADTH_FIRST -> openList.add(child);
+        }
 	}
 
 }

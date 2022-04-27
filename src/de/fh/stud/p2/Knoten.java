@@ -30,6 +30,7 @@ public class Knoten {
     private byte posX, posY;
 
     private final short cost;
+    private static final short COST_LIMIT = 1000;
     private final int heuristic;
     // TODO Idee: Zusatzinformationen fuer Knoten (dotsEaten, powerPillTimer etc.) in Extra-Objekt speichern
 
@@ -91,12 +92,11 @@ public class Knoten {
     // endregion
 
     public List<Knoten> expand() {
-        // Macht es einen Unterschied, wenn dies pro expand aufruf neu erzeugt wird?
-        // int[][] neighbourPos = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+        // Macht es einen Unterschied, wenn NEIGHBOUR_POS pro expand aufruf neu erzeugt wird? Ja
         List<Knoten> children = new LinkedList<>();
 
         for (byte[] neighbour : NEIGHBOUR_POS) {
-            if (isPassable((byte) (posX + neighbour[0]), (byte) (posY + neighbour[1]))) {
+            if (cost < COST_LIMIT && isPassable((byte) (posX + neighbour[0]), (byte) (posY + neighbour[1]))) {
                 children.add(new Knoten(this, (byte) (posX + neighbour[0]), (byte) (posY + neighbour[1])));
             }
         }
@@ -104,7 +104,7 @@ public class Knoten {
     }
 
     public boolean isGoalNode() {
-        return GOAL_PRED != null ? GOAL_PRED.isGoalNode(this) : false;
+        return GOAL_PRED != null && GOAL_PRED.isGoalNode(this);
     }
 
     public List<PacmanAction> identifyActionSequence() {
