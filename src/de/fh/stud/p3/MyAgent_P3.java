@@ -16,6 +16,8 @@ import de.fh.stud.p3.Suchen.Suchfunktionen.Zugangsfilter;
 import java.util.List;
 
 public class MyAgent_P3 extends PacmanAgent_2021 {
+    // Pommes
+    static int i;
 
     private List<PacmanAction> actionSequence;
     private Knoten loesungsKnoten;
@@ -30,8 +32,8 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
     }
 
     /**
-     @param percept - Aktuelle Wahrnehmung des Agenten, bspw. Position der Geister und Zustand aller Felder der Welt.
-     @param actionEffect - Aktuelle Rückmeldung des Server auf die letzte übermittelte Aktion.
+     * @param percept      - Aktuelle Wahrnehmung des Agenten, bspw. Position der Geister und Zustand aller Felder der Welt.
+     * @param actionEffect - Aktuelle Rückmeldung des Server auf die letzte übermittelte Aktion.
      */
     @Override
     public PacmanAction action(PacmanPercept percept, PacmanActionEffect actionEffect) {
