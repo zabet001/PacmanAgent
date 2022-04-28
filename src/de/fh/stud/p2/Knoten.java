@@ -1,10 +1,8 @@
 package de.fh.stud.p2;
 
-import de.fh.kiServer.util.Util;
 import de.fh.kiServer.util.Vector2;
 import de.fh.pacman.enums.PacmanAction;
 import de.fh.pacman.enums.PacmanTileType;
-import de.fh.stud.p3.Suchen.Suchfunktionen.Zugangsfilter;
 import interfaces.AccessibilityChecker;
 import interfaces.GoalPredicate;
 import interfaces.HeuristicFunction;
@@ -17,7 +15,7 @@ import java.util.Objects;
 public class Knoten {
 
     private static final byte[][] NEIGHBOUR_POS = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
-    public static boolean COPY_VIEW_FLAG = true;
+    public static boolean IS_STATE_SEARCH = true;
     private static PacmanTileType[][] WORLD;
 
     // TODO: Heuristiken, Kosten, Goal etc. in Suche teilen
@@ -58,7 +56,7 @@ public class Knoten {
             this.view[posX][posY] = tileToByte(PacmanTileType.EMPTY);
         } else {
             // Kindknoten
-            if (!COPY_VIEW_FLAG || pred.view[posX][posY] == tileToByte(PacmanTileType.EMPTY)) {
+            if (!IS_STATE_SEARCH || pred.view[posX][posY] == tileToByte(PacmanTileType.EMPTY)) {
                 this.view = pred.view;
             } else {
                 this.view = copyView(pred.view);
@@ -161,9 +159,9 @@ public class Knoten {
 
     public int countDots() {
         int cnt = 0;
-        for (int row = 0; row < view.length; row++) {
+        for (byte[] bytes : view) {
             for (int col = 0; col < view[0].length; col++) {
-                if (view[row][col] == tileToByte(PacmanTileType.DOT) || view[row][col] == tileToByte(PacmanTileType.GHOST_AND_DOT))
+                if (bytes[col] == tileToByte(PacmanTileType.DOT) || bytes[col] == tileToByte(PacmanTileType.GHOST_AND_DOT))
                     cnt++;
             }
         }
