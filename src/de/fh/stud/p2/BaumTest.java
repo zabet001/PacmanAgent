@@ -26,15 +26,13 @@ public class BaumTest {
 
         List<Knoten> expChildren = new LinkedList<>();
         Knoten expCand;
-        expChildren.add(Knoten.generateRoot(view, posX, posY, Zugangsfilter.safeToWalkOn(true), null,
+        expChildren.add(Knoten.generateRoot(view, posX, posY, false,Zugangsfilter.safeToWalkOn(true), null,
                 null));
 
         for (int i = 0; i < 10; i++) {
             expCand = expChildren.remove(0);
             Util.printView(Knoten.reformatToTileType(expCand.getView()));
-            expCand.expand().forEach(child -> {
-                expChildren.add(0, child);
-            });
+            expCand.expand().forEach(child -> expChildren.add(0, child));
         }
     }
 }

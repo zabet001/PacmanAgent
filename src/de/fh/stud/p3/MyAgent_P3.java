@@ -11,13 +11,13 @@ import de.fh.pacman.enums.PacmanActionEffect;
 import de.fh.stud.p2.Knoten;
 import de.fh.stud.p3.Suchen.Suche;
 import de.fh.stud.p3.Suchen.Suchfunktionen.Heuristikfunktionen;
+import de.fh.stud.p3.Suchen.Suchfunktionen.Suchszenario;
 import de.fh.stud.p3.Suchen.Suchfunktionen.Zielfunktionen;
 import de.fh.stud.p3.Suchen.Suchfunktionen.Zugangsfilter;
 
 import java.util.List;
 
 public class MyAgent_P3 extends PacmanAgent_2021 {
-
 
     private List<PacmanAction> actionSequence;
     private Knoten loesungsKnoten;
@@ -32,8 +32,8 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
     }
 
     /**
-     * @param percept      - Aktuelle Wahrnehmung des Agenten, bspw. Position der Geister und Zustand aller Felder der Welt.
-     * @param actionEffect - Aktuelle Rückmeldung des Server auf die letzte übermittelte Aktion.
+     @param percept - Aktuelle Wahrnehmung des Agenten, bspw. Position der Geister und Zustand aller Felder der Welt.
+     @param actionEffect - Aktuelle Rückmeldung des Server auf die letzte übermittelte Aktion.
      */
     @Override
     public PacmanAction action(PacmanPercept percept, PacmanActionEffect actionEffect) {
@@ -43,11 +43,8 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
             int goaly = percept.getView()[0].length - 2;
 
             Knoten start = Knoten.generateRoot(percept.getView(), percept.getPosX(), percept.getPosY(),
-                    // Suchszenario: Alle Dots fressen
-                    Zugangsfilter.safeToWalkOn(true), Zielfunktionen.allDotsEaten(), Heuristikfunktionen.remainingDots()
-                    // Suchszenario: Ziel erreichen
-/*                    Knoten.safeToWalkOn(true), Knoten.reachedDestination(goalx, goaly),
-                    Knoten.manhattanToTarget(goalx, goaly)*/);
+                    Suchszenario.eatAllDots());
+                    // Suchszenario.findDestination(goalx, goaly));
             Suche suche = new Suche();
             loesungsKnoten = suche.start(start, Suche.SearchStrategy.BREADTH_FIRST);
             if (loesungsKnoten != null)

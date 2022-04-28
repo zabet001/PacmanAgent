@@ -3,6 +3,7 @@ package de.fh.stud.p2;
 import de.fh.kiServer.util.Vector2;
 import de.fh.pacman.enums.PacmanAction;
 import de.fh.pacman.enums.PacmanTileType;
+import de.fh.stud.p3.Suchen.Suchfunktionen.Suchszenario;
 import interfaces.AccessibilityChecker;
 import interfaces.GoalPredicate;
 import interfaces.HeuristicFunction;
@@ -15,7 +16,7 @@ import java.util.Objects;
 public class Knoten {
 
     private static final byte[][] NEIGHBOUR_POS = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
-    public static boolean IS_STATE_SEARCH = true;
+    public static boolean IS_STATE_NODE = true;
     private static PacmanTileType[][] WORLD;
 
     // TODO: Heuristiken, Kosten, Goal etc. in Suche teilen
@@ -32,13 +33,22 @@ public class Knoten {
     private final int heuristic;
     // TODO Idee: Zusatzinformationen fuer Knoten (dotsEaten, powerPillTimer etc.) in Extra-Objekt speichern
 
-    public static Knoten generateRoot(PacmanTileType[][] world, int posX, int posY, AccessibilityChecker accessCheck,
+    public static Knoten generateRoot(PacmanTileType[][] world, int posX, int posY,boolean isStateNode, AccessibilityChecker accessCheck,
                                       GoalPredicate goalPred, HeuristicFunction heuristicFunc) {
         Knoten.WORLD = world;
+        Knoten.IS_STATE_NODE = isStateNode;
         Knoten.ACCESS_CHECK = accessCheck;
         Knoten.GOAL_PRED = goalPred;
         Knoten.HEURISTIC_FUNC = heuristicFunc;
         return new Knoten((byte) posX, (byte) posY);
+    }
+
+    public static Knoten generateRoot(PacmanTileType[][] world, int posX, int posY, Suchszenario searchScenario) {
+        return Knoten.generateRoot(world, posX, posY,
+                searchScenario.isStateSearch(),
+                searchScenario.getAccessCheck(),
+                searchScenario.getGoalPred(),
+                searchScenario.getHeuristicFunc());
     }
 
     private Knoten(byte posX, byte posY) {
@@ -56,7 +66,7 @@ public class Knoten {
             this.view[posX][posY] = tileToByte(PacmanTileType.EMPTY);
         } else {
             // Kindknoten
-            if (!IS_STATE_SEARCH || pred.view[posX][posY] == tileToByte(PacmanTileType.EMPTY)) {
+            if (!IS_STATE_NODE || pred.view[posX][posY] == tileToByte(PacmanTileType.EMPTY)) {
                 this.view = pred.view;
             } else {
                 this.view = copyView(pred.view);
@@ -159,9 +169,9 @@ public class Knoten {
 
     public int countDots() {
         int cnt = 0;
-        for (byte[] bytes : view) {
+        for (byte[] rowVals : view) {
             for (int col = 0; col < view[0].length; col++) {
-                if (bytes[col] == tileToByte(PacmanTileType.DOT) || bytes[col] == tileToByte(PacmanTileType.GHOST_AND_DOT))
+                if (rowVals[col] == tileToByte(PacmanTileType.DOT) || rowVals[col] == tileToByte(PacmanTileType.GHOST_AND_DOT))
                     cnt++;
             }
         }

@@ -10,8 +10,8 @@ public class Suche {
 
     public static List<Double> RUN_TIMES = new LinkedList<>();
 
-    public static boolean SHOW_RESULTS = false;
-    public static boolean PRINT_AVG_RUNTIME = true;
+    public static boolean SHOW_RESULTS = true;
+    public static boolean PRINT_AVG_RUNTIME = false;
 
     public enum SearchStrategy {
         DEPTH_FIRST, BREADTH_FIRST, GREEDY, UCS, A_STAR
@@ -100,7 +100,7 @@ public class Suche {
                 Ziel wurde %sgefunden
                 Suchalgorithmus: %s
                 Suchart: %s
-                """, result.getKey() != null ? "" : "nicht ", strategy,Knoten.IS_STATE_SEARCH ? "Zustandssuche" : "Wegsuche"));
+                """, result.getKey() != null ? "" : "nicht ", strategy,Knoten.IS_STATE_NODE ? "Zustandssuche" : "Wegsuche"));
         for (Map.Entry<String, Double> info_value : result.getValue().entrySet()) {
             report.append(String.format("%s: %,.3f\n", info_value.getKey(), info_value.getValue()));
         }
