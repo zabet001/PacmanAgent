@@ -1,10 +1,8 @@
 package de.fh.stud.Suchen.Suchfunktionen;
 
-import de.fh.kiServer.util.Util;
 import de.fh.kiServer.util.Vector2;
 import de.fh.pacman.enums.PacmanTileType;
 import de.fh.stud.Knoten;
-import de.fh.stud.MyUtil;
 import de.fh.stud.interfaces.ICallbackFunction;
 
 import java.util.List;
@@ -18,10 +16,6 @@ public class CallbackFunktionen {
         return expCand -> visitedMap[expCand.getPosX()][expCand.getPosY()] = true;
     }
 
-    public static ICallbackFunction saveVisitedPos(List<Vector2> visitedList) {
-        return expCand -> visitedList.add(expCand.getPosition());
-    }
-
     public static ICallbackFunction saveVisitedType(List<PacmanTileType> visitedTypesList) {
         return expCand -> visitedTypesList.add(Knoten.getStaticWorld()[expCand.getPosX()][expCand.getPosY()]);
     }
@@ -29,22 +23,26 @@ public class CallbackFunktionen {
     public static ICallbackFunction saveVisitedPos(List<Vector2> visitedList, boolean duplicates) {
         return expCand -> {
             if (duplicates || !visitedList.contains(expCand.getPosition()))
-                saveVisitedPos(visitedList).callback(expCand);
+                visitedList.add(expCand.getPosition());
         };
     }
 
     public static ICallbackFunction saveVisited(List<Vector2> visitedList, List<PacmanTileType> visitedTypesList,
-                                                   boolean duplicates) {
+                                                boolean duplicates) {
         return expCand -> {
             if (duplicates || !visitedList.contains(expCand.getPosition())) {
-                saveVisitedPos(visitedList).callback(expCand);
+                saveVisitedPos(visitedList,true).callback(expCand); // duplicates kann hier ignoriert werden
                 saveVisitedType(visitedTypesList).callback(expCand);
             }
         };
     }
 
-    public static ICallbackFunction setVisitedType(PacmanTileType newType) {
-        return expCand -> Knoten.getStaticWorld()[expCand.getPosX()][expCand.getPosY()] = newType;
+    public static <T> ICallbackFunction setVisitedValue(T[][] map, T value) {
+        return expCand -> map[expCand.getPosX()][expCand.getPosY()] = value;
+    }
+
+    public static <T> ICallbackFunction setVisitedValue(byte[][] map, byte value) {
+        return expCand -> map[expCand.getPosX()][expCand.getPosY()] = value;
     }
 
     public static ICallbackFunction printNodePositions() {

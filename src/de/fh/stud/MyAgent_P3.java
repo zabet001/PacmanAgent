@@ -39,7 +39,7 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
             int goaly = percept.getView()[0].length - 2;
 
             Suche suche = new Suche(Suchszenario.eatAllDots());
-            loesungsKnoten = suche.start(percept.getView(), percept.getPosX(), percept.getPosY(), Suche.SearchStrategy.BREADTH_FIRST);
+            loesungsKnoten = suche.start(percept.getView(), percept.getPosX(), percept.getPosY(), Suche.SearchStrategy.GREEDY);
             if (loesungsKnoten != null)
                 actionSequence = loesungsKnoten.identifyActionSequence();
         }

@@ -1,12 +1,6 @@
 package de.fh.stud;
 
-import de.fh.kiServer.util.Util;
 import de.fh.pacman.enums.PacmanTileType;
-import de.fh.stud.Suchen.Suche;
-import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class BaumTest {
 

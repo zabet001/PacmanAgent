@@ -57,11 +57,20 @@ public class Knoten {
     }
 
     // region Klassenmethoden
+    public static int nodeNeighbourCnt(Knoten node) {
+        int neighbourCnt = 0;
+        for (byte[] neighbour : NEIGHBOUR_POS) {
+            if (node.isPassable((byte) (node.getPosX() + neighbour[0]), (byte) (node.getPosY() + neighbour[1]))) {
+                neighbourCnt++;
+            }
+        }
+        return neighbourCnt;
+    }
+    // endregion
 
     public boolean isPassable(byte newPosX, byte newPosY) {
         return Suche.getAccessCheck().isAccessible(this, newPosX, newPosY);
     }
-    // endregion
 
     public List<Knoten> expand() {
         // Macht es einen Unterschied, wenn NEIGHBOUR_POS pro expand aufruf neu erzeugt wird? Ja

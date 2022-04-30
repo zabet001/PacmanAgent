@@ -21,8 +21,8 @@ public class Suchszenario {
     }
 
     public Suchszenario(boolean isStateProblem, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
-                        IHeuristicFunction heuristicFunc){
-        this(isStateProblem,accessCheck,goalPred,heuristicFunc, (ICallbackFunction[]) null);
+                        IHeuristicFunction heuristicFunc) {
+        this(isStateProblem, accessCheck, goalPred, heuristicFunc, (ICallbackFunction[]) null);
     }
 
     public Suchszenario(boolean isStateProblem, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
@@ -44,8 +44,10 @@ public class Suchszenario {
                 goalY), Heuristikfunktionen.manhattanToTarget(goalX, goalY));
     }
 
-    public static Suchszenario locateDeadEndExit() {
-        return new Suchszenario(false, Zugangsfilter.noWall(), Zielfunktionen.minimumNeighbours(3), null);
+    public static Suchszenario locateDeadEndExit(byte[][] markedAsOneWays) {
+        return new Suchszenario(false, Zugangsfilter.merge(Zugangsfilter.noWall(),
+                (node, newPosX, newPosY) -> markedAsOneWays[newPosX][newPosY] == 0),
+                Zielfunktionen.minimumNeighbours(2), null);
     }
 
     // region getter

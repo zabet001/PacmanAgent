@@ -1,6 +1,6 @@
 package de.fh.stud.Suchen.Suchfunktionen;
 
-import de.fh.stud.MyUtil;
+import de.fh.stud.Knoten;
 import de.fh.stud.interfaces.IGoalPredicate;
 
 public class Zielfunktionen {
@@ -25,7 +25,7 @@ public class Zielfunktionen {
     }
 
     public static IGoalPredicate minimumNeighbours(int numberOfNeighbours) {
-        return node -> MyUtil.noWallsNeighbourCnt(node.getView(), node.getPosX(), node.getPosY()) >= numberOfNeighbours;
+        return node -> Knoten.nodeNeighbourCnt(node) >= numberOfNeighbours;
     }
 
 }

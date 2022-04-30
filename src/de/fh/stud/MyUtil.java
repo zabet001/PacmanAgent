@@ -15,26 +15,6 @@ public class MyUtil {
         return ret;
     }
 
-    public static int noWallsNeighbourCnt(PacmanTileType[][] view, int posX, int posY){
-        int neighbourCnt = 0;
-        for (byte[] neighbour : Knoten.NEIGHBOUR_POS) {
-            if (view[posX + neighbour[0]][posY + neighbour[1]] != PacmanTileType.WALL) {
-                neighbourCnt++;
-            }
-        }
-        return neighbourCnt;
-    }
-
-    public static int noWallsNeighbourCnt(byte[][] view, int posX, int posY){
-        int neighbourCnt = 0;
-        for (byte[] neighbour : Knoten.NEIGHBOUR_POS) {
-            if (byteToTile(view[posX + neighbour[0]][posY + neighbour[1]]) != PacmanTileType.WALL) {
-                neighbourCnt++;
-            }
-        }
-        return neighbourCnt;
-    }
-
     public static byte tileToByte(PacmanTileType tile) {
         return (byte) tile.ordinal();
     }
@@ -52,6 +32,26 @@ public class MyUtil {
         }
 
         return view;
+    }
+
+    public static PacmanTileType[][] reformatToTileType(byte[][] view) {
+        PacmanTileType[][] ret = new PacmanTileType[view.length][view[0].length];
+        for (int i = 0; i < ret.length; i++) {
+            for (int j = 0; j < ret[0].length; j++) {
+                ret[i][j] = byteToTile(view[i][j]);
+            }
+        }
+        return ret;
+    }
+
+    public static int adjacentFreeFieldsCnt(PacmanTileType[][] view, int posX, int posY){
+        int neighbourCnt = 0;
+        for (byte[] neighbour : Knoten.NEIGHBOUR_POS) {
+            if (view[posX + neighbour[0]][posY + neighbour[1]] != PacmanTileType.WALL) {
+                neighbourCnt++;
+            }
+        }
+        return neighbourCnt;
     }
 
     public static PacmanAction oppositeAction(PacmanAction action){
@@ -76,16 +76,6 @@ public class MyUtil {
             }
         }
         return null;
-    }
-
-    public static PacmanTileType[][] reformatToTileType(byte[][] view) {
-        PacmanTileType[][] ret = new PacmanTileType[view.length][view[0].length];
-        for (int i = 0; i < ret.length; i++) {
-            for (int j = 0; j < ret[0].length; j++) {
-                ret[i][j] = byteToTile(view[i][j]);
-            }
-        }
-        return ret;
     }
 
     public static void println(String s) {
