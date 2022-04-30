@@ -17,12 +17,12 @@ public class Suchszenario {
     private final boolean isStateProblem;
 
     public Suchszenario(IAccessibilityChecker accessCheck, IGoalPredicate goalPred, IHeuristicFunction heuristicFunc) {
-        this(true, accessCheck, goalPred, heuristicFunc, (ICallbackFunction) null);
+        this(true, accessCheck, goalPred, heuristicFunc, (ICallbackFunction[]) null);
     }
 
     public Suchszenario(boolean isStateProblem, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
                         IHeuristicFunction heuristicFunc){
-        this(isStateProblem,accessCheck,goalPred,heuristicFunc, (ICallbackFunction) null);
+        this(isStateProblem,accessCheck,goalPred,heuristicFunc, (ICallbackFunction[]) null);
     }
 
     public Suchszenario(boolean isStateProblem, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
