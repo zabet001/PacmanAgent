@@ -2,6 +2,7 @@ package de.fh.stud;
 
 import de.fh.kiServer.util.Util;
 import de.fh.pacman.enums.PacmanTileType;
+import de.fh.stud.Suchen.Suche;
 import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
 
 import java.util.LinkedList;
@@ -11,11 +12,11 @@ public class BaumTest {
 
     public static void main(String[] args) {
         //Anfangszustand nach Aufgabe
-        PacmanTileType[][] view = {{PacmanTileType.WALL, PacmanTileType.WALL, PacmanTileType.WALL,
-                PacmanTileType.WALL}, {PacmanTileType.WALL, PacmanTileType.EMPTY, PacmanTileType.DOT,
-                PacmanTileType.WALL}, {PacmanTileType.WALL, PacmanTileType.EMPTY, PacmanTileType.WALL,
-                PacmanTileType.WALL}, {PacmanTileType.WALL, PacmanTileType.WALL, PacmanTileType.WALL,
-                PacmanTileType.WALL}};
+        PacmanTileType[][] view = {
+                {PacmanTileType.WALL, PacmanTileType.WALL, PacmanTileType.WALL,PacmanTileType.WALL},
+                {PacmanTileType.WALL, PacmanTileType.EMPTY, PacmanTileType.DOT, PacmanTileType.WALL},
+                {PacmanTileType.WALL, PacmanTileType.DOT, PacmanTileType.WALL, PacmanTileType.WALL},
+                {PacmanTileType.WALL, PacmanTileType.WALL, PacmanTileType.WALL, PacmanTileType.WALL}};
 
         //Startposition des Pacman
         int posX = 1, posY = 1;
@@ -24,15 +25,19 @@ public class BaumTest {
          * Anfangszustand (siehe view, posX und posY) den Suchbaum auf.
          */
 
+
+        // Um Code laufen zu lassen: Attribute auf public umaendern
+/**     Suche.ACCESS_CHECK = Zugangsfilter.noWall();
+        Suche.HEURISTIC_FUNC = node -> 0;
+
         List<Knoten> expChildren = new LinkedList<>();
         Knoten expCand;
-        expChildren.add(Knoten.generateRoot(view, posX, posY, false,Zugangsfilter.safeToWalkOn(true), null,
-                null,null));
+        expChildren.add(Knoten.generateRoot(view, posX, posY));
 
         for (int i = 0; i < 10; i++) {
             expCand = expChildren.remove(0);
             Util.printView(MyUtil.reformatToTileType(expCand.getView()));
-            expCand.expand().forEach(child -> expChildren.add(0, child));
-        }
+            expCand.expand().forEach(child -> expChildren.add( child));
+        }*/
     }
 }

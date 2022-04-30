@@ -91,4 +91,12 @@ public class MyUtil {
     public static void println(String s) {
         System.out.println(s);
     }
+
+    public static <T> T[] mergeArrays(T[] a, T[] b){
+        if(a == null) return b;
+        if(b == null) return a;
+        T[] ret = Arrays.copyOf(a,a.length+b.length);
+        System.arraycopy(b,0,ret,a.length,b.length);
+        return ret;
+    }
 }

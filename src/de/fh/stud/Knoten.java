@@ -3,11 +3,8 @@ package de.fh.stud;
 import de.fh.kiServer.util.Vector2;
 import de.fh.pacman.enums.PacmanAction;
 import de.fh.pacman.enums.PacmanTileType;
-import de.fh.stud.Suchen.Suchszenarien;
-import de.fh.stud.interfaces.IAccessibilityChecker;
+import de.fh.stud.Suchen.Suche;
 import de.fh.stud.interfaces.ICallbackFunction;
-import de.fh.stud.interfaces.IGoalPredicate;
-import de.fh.stud.interfaces.IHeuristicFunction;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -17,39 +14,19 @@ import java.util.Objects;
 public class Knoten {
 
     public static final byte[][] NEIGHBOUR_POS = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
-    public static boolean IS_STATE_NODE = true;
     private static PacmanTileType[][] STATIC_WORLD;
-
-
-    // TODO: Heuristiken, Kosten, Goal etc. in Suche teilen
-    private static IAccessibilityChecker ACCESS_CHECK;
-    private static IGoalPredicate GOAL_PRED;
-    private static IHeuristicFunction HEURISTIC_FUNC;
-    private static ICallbackFunction[] CALLBACK_FUNCS;
+    private static final short COST_LIMIT = 1000;
 
     private final Knoten pred;
-    private byte[][] view;
+    private final byte[][] view;
     private byte posX, posY;
     private final short cost;
 
-    private static final short COST_LIMIT = 1000;
     private final int heuristic;
     // TODO Idee: Zusatzinformationen fuer Knoten (dotsEaten, powerPillTimer etc.) in Extra-Objekt speichern
-    public static Knoten generateRoot(PacmanTileType[][] world, int posX, int posY, Suchszenarien searchScenario) {
-        return Knoten.generateRoot(world, posX, posY, searchScenario.isStateSearch(), searchScenario.getAccessCheck()
-                , searchScenario.getGoalPred(), searchScenario.getHeuristicFunc(), searchScenario.getCallbackFuncs());
-    }
 
-    public static Knoten generateRoot(PacmanTileType[][] world, int posX, int posY, boolean isStateNode,
-                                      IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
-                                      IHeuristicFunction heuristicFunc, ICallbackFunction... callbackFuncs) {
+    public static Knoten generateRoot(PacmanTileType[][] world, int posX, int posY) {
         Knoten.STATIC_WORLD = world;
-        Knoten.IS_STATE_NODE = isStateNode;
-        Knoten.ACCESS_CHECK = accessCheck;
-        Knoten.GOAL_PRED = goalPred != null ? goalPred : node -> false;
-        Knoten.HEURISTIC_FUNC = heuristicFunc != null ? heuristicFunc : node -> 0;
-        Knoten.CALLBACK_FUNCS = callbackFuncs != null ? callbackFuncs : new ICallbackFunction[]{expCand -> {}};
-
         return new Knoten((byte) posX, (byte) posY);
     }
 
@@ -68,7 +45,7 @@ public class Knoten {
             this.view[posX][posY] = MyUtil.tileToByte(PacmanTileType.EMPTY);
         } else {
             // Kindknoten
-            if (!IS_STATE_NODE || pred.view[posX][posY] == MyUtil.tileToByte(PacmanTileType.EMPTY)) {
+            if (!Suche.isStateSearch() || pred.view[posX][posY] == MyUtil.tileToByte(PacmanTileType.EMPTY)) {
                 this.view = pred.view;
             } else {
                 this.view = MyUtil.copyView(pred.view);
@@ -76,13 +53,13 @@ public class Knoten {
             }
         }
         this.cost = pred == null ? 0 : (short) (pred.cost + 1);
-        this.heuristic = HEURISTIC_FUNC.calcHeuristic(this);
+        this.heuristic = Suche.getHeuristicFunc().calcHeuristic(this);
     }
 
     // region Klassenmethoden
 
     public boolean isPassable(byte newPosX, byte newPosY) {
-        return ACCESS_CHECK.isAccessible(this, newPosX, newPosY);
+        return Suche.getAccessCheck().isAccessible(this, newPosX, newPosY);
     }
     // endregion
 
@@ -97,12 +74,13 @@ public class Knoten {
         }
         return children;
     }
+
     public boolean isGoalNode() {
-        return GOAL_PRED.isGoalNode(this);
+        return Suche.getGoalPred().isGoalNode(this);
     }
 
     public void executeCallbacks() {
-        for (ICallbackFunction callbacks : Knoten.CALLBACK_FUNCS) {
+        for (ICallbackFunction callbacks : Suche.getCallbackFuncs()) {
             callbacks.callback(this);
         }
     }
@@ -176,6 +154,7 @@ public class Knoten {
     public byte[][] getView() {
         return view;
     }
+
     public Knoten getPred() {
         return pred;
     }
