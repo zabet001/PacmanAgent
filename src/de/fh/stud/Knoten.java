@@ -81,6 +81,8 @@ public class Knoten {
                 children.add(new Knoten(this, (byte) (posX + neighbour[0]), (byte) (posY + neighbour[1])));
             }
         }
+        // children.add(new Knoten(this, posX, posY));
+
         return children;
     }
 
