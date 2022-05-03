@@ -19,7 +19,7 @@ public class InformedOpenList extends OpenList{
     }
 
     @Override
-    public Knoten add() {
+    public Knoten remove() {
         return openList.remove();
     }
 

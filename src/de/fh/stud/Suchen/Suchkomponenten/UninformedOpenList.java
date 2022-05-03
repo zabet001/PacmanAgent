@@ -22,7 +22,7 @@ public class UninformedOpenList extends OpenList {
     }
 
     @Override
-    public Knoten add() {
+    public Knoten remove() {
         return openList.remove(0);
     }
 

@@ -24,8 +24,8 @@ public class Suche {
 
     // TODO: Heuristiken, Kosten, Goal etc. in Suche teilen
     private static boolean STATE_SEARCH = true;
-    private static IAccessibilityChecker ACCESS_CHECK;
 
+    private static IAccessibilityChecker ACCESS_CHECK;
     private static IGoalPredicate GOAL_PRED;
     private static IHeuristicFunction HEURISTIC_FUNC;
     private static ICallbackFunction[] CALLBACK_FUNCS;
@@ -99,7 +99,7 @@ public class Suche {
         List<Knoten> goalNodes = new LinkedList<>();
 
         while (!openList.isEmpty()) {
-            expCand = openList.add();
+            expCand = openList.remove();
             if (expCand.isGoalNode()) {
                 goalNodes.add(expCand);
                 if (goalNodes.size() >= solutionLimit)

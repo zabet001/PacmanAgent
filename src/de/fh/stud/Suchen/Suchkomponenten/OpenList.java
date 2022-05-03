@@ -18,7 +18,7 @@ public abstract class OpenList {
 
     public abstract void add(Knoten child);
 
-    public abstract Knoten add();
+    public abstract Knoten remove();
 
     public abstract boolean isEmpty();
 
