@@ -35,12 +35,12 @@ public class Suchszenario {
     }
 
     public static Suchszenario eatAllDots() {
-        return new Suchszenario(Zugangsfilter.safeToWalkOn(true), Zielfunktionen.allDotsEaten(),
+        return new Suchszenario(Zugangsfilter.safeToWalkOn(), Zielfunktionen.allDotsEaten(),
                 Heuristikfunktionen.remainingDots());
     }
 
     public static Suchszenario findDestination(int goalX, int goalY) {
-        return new Suchszenario(false, Zugangsfilter.safeToWalkOn(true), Zielfunktionen.reachedDestination(goalX,
+        return new Suchszenario(false, Zugangsfilter.safeToWalkOn(), Zielfunktionen.reachedDestination(goalX,
                 goalY), Heuristikfunktionen.manhattanToTarget(goalX, goalY));
     }
 

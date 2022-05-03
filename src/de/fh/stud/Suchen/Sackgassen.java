@@ -2,10 +2,10 @@ package de.fh.stud.Suchen;
 
 import de.fh.kiServer.util.Vector2;
 import de.fh.pacman.enums.PacmanTileType;
-import de.fh.stud.Knoten;
 import de.fh.stud.MyUtil;
 import de.fh.stud.Suchen.Suchfunktionen.CallbackFunktionen;
 import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
+import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 
 import java.util.AbstractMap;
 import java.util.LinkedList;

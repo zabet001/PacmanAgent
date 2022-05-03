@@ -18,18 +18,11 @@ public class Zugangsfilter {
     }
 
     public static IAccessibilityChecker safeToWalkOn() {
-        return safeToWalkOn(false);
-    }
+        return (node, newPosX, newPosY) -> {
+            PacmanTileType field = MyUtil.byteToTile(node.getView()[newPosX][newPosY]);
+            return field == PacmanTileType.EMPTY || field == PacmanTileType.DOT || field == PacmanTileType.POWERPILL;
+        };
 
-    public static IAccessibilityChecker safeToWalkOn(boolean noPowerpill) {
-        if (noPowerpill) {
-            return (node, newPosX, newPosY) -> {
-                PacmanTileType field = MyUtil.byteToTile(node.getView()[newPosX][newPosY]);
-                return field == PacmanTileType.EMPTY || field == PacmanTileType.DOT || field == PacmanTileType.POWERPILL;
-            };
-        } else
-            // TODO: Powerpille einbeziehen, falls Geist
-            return null;
     }
 
     public static IAccessibilityChecker noWall() {

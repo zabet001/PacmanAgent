@@ -1,6 +1,6 @@
 package de.fh.stud.Suchen.Suchfunktionen;
 
-import de.fh.stud.Knoten;
+import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 import de.fh.stud.interfaces.IGoalPredicate;
 
 public class Zielfunktionen {

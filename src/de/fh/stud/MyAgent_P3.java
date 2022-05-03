@@ -9,6 +9,7 @@ import de.fh.pacman.enums.PacmanAction;
 import de.fh.pacman.enums.PacmanActionEffect;
 import de.fh.stud.Suchen.Sackgassen;
 import de.fh.stud.Suchen.Suche;
+import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 import de.fh.stud.Suchen.Suchszenario;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
             int goaly = percept.getView()[0].length - 2;
 
             Suche suche = new Suche(Suchszenario.eatAllDots());
-            loesungsKnoten = suche.start(percept.getView(), percept.getPosX(), percept.getPosY(), Suche.SearchStrategy.GREEDY);
+            loesungsKnoten = suche.start(percept.getView(), percept.getPosX(), percept.getPosY(), Suche.SearchStrategy.A_STAR);
             if (loesungsKnoten != null)
                 actionSequence = loesungsKnoten.identifyActionSequence();
         }

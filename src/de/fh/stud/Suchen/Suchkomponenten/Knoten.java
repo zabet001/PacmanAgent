@@ -1,8 +1,9 @@
-package de.fh.stud;
+package de.fh.stud.Suchen.Suchkomponenten;
 
 import de.fh.kiServer.util.Vector2;
 import de.fh.pacman.enums.PacmanAction;
 import de.fh.pacman.enums.PacmanTileType;
+import de.fh.stud.MyUtil;
 import de.fh.stud.Suchen.Suche;
 import de.fh.stud.interfaces.ICallbackFunction;
 

@@ -2,6 +2,7 @@ package de.fh.stud;
 
 import de.fh.pacman.enums.PacmanAction;
 import de.fh.pacman.enums.PacmanTileType;
+import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 
 import java.util.Arrays;
 
