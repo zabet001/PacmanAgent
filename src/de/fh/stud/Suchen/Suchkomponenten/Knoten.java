@@ -188,7 +188,7 @@ public class Knoten {
         posY = (byte) pos.y;
     }
 
-    public int getCost() {
+    public short getCost() {
         return cost;
     }
 

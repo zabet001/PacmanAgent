@@ -8,8 +8,8 @@ import de.fh.stud.interfaces.ICallbackFunction;
 import java.util.List;
 
 public class CallbackFunktionen {
-    public static ICallbackFunction saveStepCost(byte[][] costMap) {
-        return expCand -> costMap[expCand.getPosX()][expCand.getPosY()] = (byte) (expCand.getCost() + 1);
+    public static ICallbackFunction saveStepCost(short[][] costMap) {
+        return expCand -> costMap[expCand.getPosX()][expCand.getPosY()] = expCand.getCost();
     }
 
     public static ICallbackFunction saveVisitedPos(boolean[][] visitedMap) {

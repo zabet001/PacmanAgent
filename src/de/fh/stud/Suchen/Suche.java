@@ -12,23 +12,27 @@ import de.fh.stud.interfaces.IGoalPredicate;
 import de.fh.stud.interfaces.IHeuristicFunction;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class Suche {
 
-    public static int MAX_SOLUTION_LIMIT = Integer.MAX_VALUE;
-    public static List<Double> RUN_TIMES = new LinkedList<>();
-
+    public static final int MAX_SOLUTION_LIMIT = Integer.MAX_VALUE;
     private static final boolean SHOW_RESULTS = true;
     private static final boolean PRINT_AVG_RUNTIME = false;
 
-    // TODO: Heuristiken, Kosten, Goal etc. in Suche teilen
-    private static boolean STATE_SEARCH = true;
+    public static List<Double> runTimes = new LinkedList<>();
+    private static boolean stateSearch = true;
 
-    private static IAccessibilityChecker ACCESS_CHECK;
-    private static IGoalPredicate GOAL_PRED;
-    private static IHeuristicFunction HEURISTIC_FUNC;
-    private static ICallbackFunction[] CALLBACK_FUNCS;
+    // TODO: Heuristiken, Kosten, Goal etc. in Suche teilen
+
+    private static IAccessibilityChecker accessCheck;
+    private static IGoalPredicate goalPred;
+    private static IHeuristicFunction heuristicFunc;
+    private static ICallbackFunction[] callbackFuncs;
 
     public Suche(Suchszenario searchScenario) {
         this(searchScenario.isStateProblem(), searchScenario.getAccessCheck(), searchScenario.getGoalPred(),
@@ -43,11 +47,11 @@ public class Suche {
 
     public Suche(boolean isStateSearch, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
                  IHeuristicFunction heuristicFunc, ICallbackFunction... callbackFunctions) {
-        Suche.ACCESS_CHECK = accessCheck;
-        Suche.GOAL_PRED = goalPred != null ? goalPred : node -> false;
-        Suche.HEURISTIC_FUNC = heuristicFunc != null ? heuristicFunc : node -> 0;
-        Suche.CALLBACK_FUNCS = callbackFunctions != null ? callbackFunctions : new ICallbackFunction[]{expCand -> {}};
-        Suche.STATE_SEARCH = isStateSearch;
+        Suche.accessCheck = accessCheck;
+        Suche.goalPred = goalPred != null ? goalPred : node -> false;
+        Suche.heuristicFunc = heuristicFunc != null ? heuristicFunc : node -> 0;
+        Suche.callbackFuncs = callbackFunctions != null ? callbackFunctions : new ICallbackFunction[]{expCand -> {}};
+        Suche.stateSearch = isStateSearch;
     }
 
     public enum SearchStrategy {
@@ -73,16 +77,16 @@ public class Suche {
         Knoten rootNode = Knoten.generateRoot(world, posX, posY);
 
         long startTime = System.nanoTime();
-        AbstractMap.SimpleEntry<List<Knoten>, Map<String, Double>> searchResult = beginSearch(rootNode,
-                OpenList.buildOpenList(strategy), ClosedList.buildClosedList(STATE_SEARCH, world), solutionLimit,
+        SimpleEntry<List<Knoten>, Map<String, Double>> searchResult = beginSearch(rootNode,
+                OpenList.buildOpenList(strategy), ClosedList.buildClosedList(stateSearch, world), solutionLimit,
                 startTime);
 
         if (PRINT_AVG_RUNTIME) {
             double elapsedTime = searchResult.getValue().get("Rechenzeit in ms.");
-            RUN_TIMES.add(elapsedTime);
-            MyUtil.println(String.format("Laufzeit fuer Durchlauf Nr. %d: %.2f ms.\n", RUN_TIMES.size(), elapsedTime));
-            MyUtil.println(String.format("Durchschnittliche. Laufzeit: %.2f ms.", RUN_TIMES.stream().reduce(0.0,
-                    Double::sum) / RUN_TIMES.size()));
+            runTimes.add(elapsedTime);
+            MyUtil.println(String.format("Laufzeit fuer Durchlauf Nr. %d: %.2f ms.\n", runTimes.size(), elapsedTime));
+            MyUtil.println(String.format("Durchschnittliche. Laufzeit: %.2f ms.", runTimes.stream().reduce(0.0,
+                    Double::sum) / runTimes.size()));
             MyUtil.println("...");
         }
         if (showResults)
@@ -91,9 +95,10 @@ public class Suche {
         return searchResult.getKey();
     }
 
-    private AbstractMap.SimpleEntry<List<Knoten>, Map<String, Double>> beginSearch(Knoten startNode, OpenList openList,
-                                                                                   ClosedList closedList, int solutionLimit
-            , long startTime) {
+    private SimpleEntry<List<Knoten>, Map<String, Double>> beginSearch(Knoten startNode,
+                                                                                   OpenList openList,
+                                                                                   ClosedList closedList,
+                                                                                   int solutionLimit, long startTime) {
         openList.add(startNode);
         Knoten expCand;
         List<Knoten> goalNodes = new LinkedList<>();
@@ -112,11 +117,12 @@ public class Suche {
             }
         }
 
-        return new AbstractMap.SimpleEntry<>(goalNodes, searchResultInfos(startTime, goalNodes.size(), openList.size(),
-                closedList.size()));
+        return new SimpleEntry<>(goalNodes, searchResultInfos(startTime, goalNodes.size(),
+                openList.size(), closedList.size()));
     }
 
-    private Map<String, Double> searchResultInfos(long startingTime,int goalListSize, int openListSize, int closedListSize) {
+    private Map<String, Double> searchResultInfos(long startingTime, int goalListSize, int openListSize,
+                                                  int closedListSize) {
         return new LinkedHashMap<>() {{
             put("Rechenzeit in ms.", Util.timeSince(startingTime));
             put("Anzahl gefundener Loesungen", (double) goalListSize);
@@ -126,15 +132,16 @@ public class Suche {
     }
 
     private void printDebugInfos(SearchStrategy strategy,
-                                 AbstractMap.SimpleEntry<List<Knoten>, Map<String, Double>> result) {
+                                 SimpleEntry<List<Knoten>, Map<String, Double>> result) {
         StringBuilder report = new StringBuilder(String.format("""
                 Ziel wurde %sgefunden
                 Suchalgorithmus: %s
                 Suchart: %s
-                """, result.getKey().size() != 0 ? "" : "nicht ", strategy, STATE_SEARCH ? "Zustandssuche" : "Wegsuche"));
+                """, result.getKey().size() != 0 ? "" : "nicht ", strategy, stateSearch ? "Zustandssuche" :
+                "Wegsuche"));
         for (Map.Entry<String, Double> info_value : result.getValue().entrySet()) {
             // Anhaengende nullen nach dem Komma entfernen
-            String val = String.format("%,.3f",info_value.getValue());
+            String val = String.format("%,.3f", info_value.getValue());
             int i = val.length() - 1;
             while (val.charAt(i) == '0')
                 i--;
@@ -149,22 +156,22 @@ public class Suche {
     }
 
     public static boolean isStateSearch() {
-        return STATE_SEARCH;
+        return stateSearch;
     }
 
     public static IAccessibilityChecker getAccessCheck() {
-        return ACCESS_CHECK;
+        return accessCheck;
     }
 
     public static IGoalPredicate getGoalPred() {
-        return GOAL_PRED;
+        return goalPred;
     }
 
     public static IHeuristicFunction getHeuristicFunc() {
-        return HEURISTIC_FUNC;
+        return heuristicFunc;
     }
 
     public static ICallbackFunction[] getCallbackFuncs() {
-        return CALLBACK_FUNCS;
+        return callbackFuncs;
     }
 }

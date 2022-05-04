@@ -35,7 +35,7 @@ public class Suchszenario {
     }
 
     public static Suchszenario eatAllDots() {
-        return new Suchszenario(Zugangsfilter.safeToWalkOn(), Zielfunktionen.allDotsEaten(),
+        return new Suchszenario(Zugangsfilter.noWall(), Zielfunktionen.allDotsEaten(),
                 Heuristikfunktionen.remainingDots());
     }
 

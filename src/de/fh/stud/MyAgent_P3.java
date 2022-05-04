@@ -1,12 +1,15 @@
 package de.fh.stud;
 
 import de.fh.kiServer.agents.Agent;
+import de.fh.kiServer.util.Util;
 import de.fh.pacman.PacmanAgent_2021;
 import de.fh.pacman.PacmanGameResult;
 import de.fh.pacman.PacmanPercept;
 import de.fh.pacman.PacmanStartInfo;
 import de.fh.pacman.enums.PacmanAction;
 import de.fh.pacman.enums.PacmanActionEffect;
+import de.fh.pacman.enums.PacmanTileType;
+import de.fh.stud.Suchen.Felddistanzen;
 import de.fh.stud.Suchen.Sackgassen;
 import de.fh.stud.Suchen.Suche;
 import de.fh.stud.Suchen.Suchkomponenten.Knoten;
@@ -57,7 +60,13 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
 
     @Override
     protected void onGameStart(PacmanStartInfo startInfo) {
-        Sackgassen.initDeadEndDepth(startInfo.getPercept().getView());
+/*        long start = System.nanoTime();
+        PacmanTileType[][] world = startInfo.getPercept().getView();
+        Sackgassen.initDeadEndDepth(world);
+        // Sackgassen.printOneWayDepthMap(world);
+        Felddistanzen.initDistances(world);
+        // Felddistanzen.printAllDistances(world);
+        MyUtil.println("Laufzeit fuer Init von Sackgassen + Felddistanzen: \n" + Util.timeSince(start));*/
     }
 
     @Override
