@@ -23,7 +23,7 @@ public class Knoten {
     private byte posX, posY;
     private final short cost;
 
-    private final int heuristic;
+    private final short remainingDots;
     // TODO Idee: Zusatzinformationen fuer Knoten (dotsEaten, powerPillTimer etc.) in Extra-Objekt speichern
 
     public static Knoten generateRoot(PacmanTileType[][] world, int posX, int posY) {
@@ -44,6 +44,8 @@ public class Knoten {
             // Wurzelknoten
             this.view = MyUtil.createByteView(STATIC_WORLD);
             this.view[posX][posY] = MyUtil.tileToByte(PacmanTileType.EMPTY);
+            this.remainingDots = countDots();
+            this.cost = 0;
         } else {
             // Kindknoten
             if (!Suche.isStateSearch() || pred.view[posX][posY] == MyUtil.tileToByte(PacmanTileType.EMPTY)) {
@@ -52,9 +54,12 @@ public class Knoten {
                 this.view = MyUtil.copyView(pred.view);
                 this.view[posX][posY] = MyUtil.tileToByte(PacmanTileType.EMPTY);
             }
+            if (Suche.isStateSearch() && MyUtil.byteToTile(pred.view[posX][posY]) == PacmanTileType.DOT)
+                this.remainingDots = (short) (pred.remainingDots - 1);
+            else
+                this.remainingDots = pred.remainingDots;
+            this.cost = (short) (pred.cost + 1);
         }
-        this.cost = pred == null ? 0 : (short) (pred.cost + 1);
-        this.heuristic = Suche.getHeuristicFunc().calcHeuristic(this);
     }
 
     // region Klassenmethoden
@@ -133,8 +138,7 @@ public class Knoten {
         if (o == null || getClass() != o.getClass())
             return false;
         Knoten knoten = (Knoten) o;
-        return heuristic == knoten.heuristic && posX == knoten.posX && posY == knoten.posY && Arrays.deepEquals(view,
-                knoten.view);
+        return remainingDots == knoten.remainingDots && posX == knoten.posX && posY == knoten.posY && Arrays.deepEquals(view, knoten.view);
 
     }
 
@@ -146,9 +150,8 @@ public class Knoten {
     }
 
     // region Setup
-
-    public int countDots() {
-        int cnt = 0;
+    public short countDots() {
+        short cnt = 0;
         for (byte[] rowVals : view) {
             for (int col = 0; col < view[0].length; col++) {
                 if (rowVals[col] == MyUtil.tileToByte(PacmanTileType.DOT) || rowVals[col] == MyUtil.tileToByte(PacmanTileType.GHOST_AND_DOT))
@@ -158,9 +161,11 @@ public class Knoten {
         return cnt;
     }
     // endregion
+
     // region Debug
 
     // endregion
+
     // region Getter und Setter
 
     public byte[][] getView() {
@@ -192,8 +197,12 @@ public class Knoten {
         return cost;
     }
 
-    public int getHeuristic() {
-        return heuristic;
+    public short getRemainingDots() {
+        return remainingDots;
+    }
+
+    public float heuristicalValue(){
+        return Suche.getHeuristicFunc().calcHeuristic(this);
     }
 
     public static PacmanTileType[][] getStaticWorld() {

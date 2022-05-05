@@ -6,6 +6,8 @@ import de.fh.stud.Suchen.Suchfunktionen.CallbackFunktionen;
 import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class Felddistanzen {
 
@@ -14,38 +16,48 @@ public class Felddistanzen {
     private static short MAX_DISTANCE;
 
     public static void initDistances(PacmanTileType[][] world) {
+
+        AtomicReference<Short> maxDist = new AtomicReference<>((short) 0);
+
         distanceMap = new short[world.length][world[0].length][][];
         for (int i = 0; i < world.length; i++) {
             for (int j = 0; j < world[0].length; j++) {
-                if (world[i][j] != PacmanTileType.WALL)
-                    distanceMap[i][j] = allDistances(world, i, j);
+                if (world[i][j] != PacmanTileType.WALL) {
+                    distanceMap[i][j] = allDistances(world, i, j, i1 -> {
+                        if (i1 > maxDist.get())
+                            maxDist.set(i1);
+                    });
+
+                }
             }
         }
 
+        MAX_DISTANCE = maxDist.get();
     }
 
-    private static short[][] allDistances(PacmanTileType[][] world, int fieldX, int fieldY) {
+    private static short[][] allDistances(PacmanTileType[][] world, int fieldX, int fieldY, Consumer<Short> callback) {
         short[][] distancesForThisPos = new short[world.length][world[0].length];
 
+
         Suche writeDistances = new Suche(false, Zugangsfilter.noWall(), null, null,
-                CallbackFunktionen.saveStepCost(distancesForThisPos));
+                CallbackFunktionen.saveStepCost(distancesForThisPos), expCand -> callback.accept(expCand.getCost()));
         writeDistances.start(world, fieldX, fieldY, Suche.SearchStrategy.BREADTH_FIRST, false);
 
         return distancesForThisPos;
     }
 
-    public static short maxDistance() {
+    private static short calcMaxDistance() {
         short max = 0;
         for (int i = 0; i < distanceMap.length; i++)
             for (int j = 0; j < distanceMap[0].length; j++)
                 if (distanceMap[i][j] != null)
-                    if (maxDistance(i, j) > max)
-                        max = maxDistance(i, j);
+                    if (calcMaxDistance(i, j) > max)
+                        max = calcMaxDistance(i, j);
 
         return max;
     }
 
-    public static short maxDistance(int posX, int posY) {
+    private static short calcMaxDistance(int posX, int posY) {
         short max = 0;
         for (int i = 0; i < distanceMap.length; i++) {
             for (int j = 0; j < distanceMap[0].length; j++) {
@@ -56,8 +68,6 @@ public class Felddistanzen {
         }
         return max;
     }
-
-
 
     public static short getDistance(int firstPosX, int firstPosY, int secondPosX, int secondPosY) {
         assert distanceMap[firstPosX][firstPosY] != null;
@@ -71,6 +81,10 @@ public class Felddistanzen {
 
     public static short[][][][] getDistances() {
         return distanceMap;
+    }
+
+    public static short getMaxDistance() {
+        return MAX_DISTANCE;
     }
 
     public static void printAllDistances(PacmanTileType[][] world) {
@@ -100,8 +114,8 @@ public class Felddistanzen {
         }
         return ret.toString();
     }
-
     public static class Geisterdistanz {
+
         public short[] distanceToAllGhost(int posX, int posY, List<GhostInfo> ghostInfos) {
             short[] ret = new short[ghostInfos.size()];
             int i = 0;

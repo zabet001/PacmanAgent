@@ -35,9 +35,9 @@ public class InformedOpenList extends OpenList{
 
     private static Comparator<Knoten> getInsertionCriteria(Suche.SearchStrategy strategy) {
         return switch (strategy) {
-            case GREEDY -> Comparator.comparingInt(Knoten::getHeuristic);
+            case GREEDY -> Comparator.comparingInt(Knoten::getRemainingDots);
             case UCS -> Comparator.comparingInt(Knoten::getCost);
-            case A_STAR -> Comparator.comparingInt(a -> a.getCost() + a.getHeuristic());
+            case A_STAR -> Comparator.comparingInt(a -> a.getCost() + a.getRemainingDots());
             default -> null;
         };
     }

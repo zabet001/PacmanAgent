@@ -16,7 +16,7 @@ public class Zielfunktionen {
     }
 
     public static IGoalPredicate allDotsEaten() {
-        return node -> node.getHeuristic() == 0;
+        return node -> node.getRemainingDots() == 0;
     }
 
     //region Zielzustandsfunktionen

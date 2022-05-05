@@ -43,7 +43,7 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
             int goaly = percept.getView()[0].length - 2;
 
             Suche suche = new Suche(Suchszenario.eatAllDots());
-            loesungsKnoten = suche.start(percept.getView(), percept.getPosX(), percept.getPosY(), Suche.SearchStrategy.BREADTH_FIRST);
+            loesungsKnoten = suche.start(percept.getView(), percept.getPosX(), percept.getPosY(), Suche.SearchStrategy.A_STAR);
             if (loesungsKnoten != null)
                 actionSequence = loesungsKnoten.identifyActionSequence();
         }
@@ -55,18 +55,17 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
             //Ansonsten wurde keine Lösung gefunden und der Pacman kann das Spiel aufgeben
             return PacmanAction.QUIT_GAME;
         }
-
     }
 
     @Override
     protected void onGameStart(PacmanStartInfo startInfo) {
-/*        long start = System.nanoTime();
+        long start = System.nanoTime();
         PacmanTileType[][] world = startInfo.getPercept().getView();
         Sackgassen.initDeadEndDepth(world);
         // Sackgassen.printOneWayDepthMap(world);
         Felddistanzen.initDistances(world);
         // Felddistanzen.printAllDistances(world);
-        MyUtil.println("Laufzeit fuer Init von Sackgassen + Felddistanzen: \n" + Util.timeSince(start));*/
+        MyUtil.println("Laufzeit fuer Init von Sackgassen + Felddistanzen: \n" + Util.timeSince(start));
     }
 
     @Override
