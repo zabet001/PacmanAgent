@@ -65,7 +65,7 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
         // Sackgassen.printOneWayDepthMap(world);
         Felddistanzen.initDistances(world);
         // Felddistanzen.printAllDistances(world);
-        MyUtil.println("Laufzeit fuer Init von Sackgassen + Felddistanzen: \n" + Util.timeSince(start));
+        MyUtil.println("Laufzeit fuer Init von Sackgassen + Felddistanzen: " + Util.timeSince(start));
     }
 
     @Override

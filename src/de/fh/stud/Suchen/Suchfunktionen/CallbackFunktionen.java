@@ -8,6 +8,10 @@ import de.fh.stud.interfaces.ICallbackFunction;
 import java.util.List;
 
 public class CallbackFunktionen {
+    public static ICallbackFunction[] toArray(ICallbackFunction... functions){
+        return functions;
+    }
+
     public static ICallbackFunction saveStepCost(short[][] costMap) {
         return expCand -> costMap[expCand.getPosX()][expCand.getPosY()] = expCand.getCost();
     }

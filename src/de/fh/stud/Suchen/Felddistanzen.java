@@ -2,8 +2,12 @@ package de.fh.stud.Suchen;
 
 import de.fh.pacman.GhostInfo;
 import de.fh.pacman.enums.PacmanTileType;
+import de.fh.stud.MyUtil;
 import de.fh.stud.Suchen.Suchfunktionen.CallbackFunktionen;
+import de.fh.stud.Suchen.Suchfunktionen.Zielfunktionen;
 import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
+import de.fh.stud.Suchen.Suchkomponenten.Knoten;
+import de.fh.stud.interfaces.ICallbackFunction;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,9 +42,9 @@ public class Felddistanzen {
     private static short[][] allDistances(PacmanTileType[][] world, int fieldX, int fieldY, Consumer<Short> callback) {
         short[][] distancesForThisPos = new short[world.length][world[0].length];
 
-
         Suche writeDistances = new Suche(false, Zugangsfilter.noWall(), null, null,
-                CallbackFunktionen.saveStepCost(distancesForThisPos), expCand -> callback.accept(expCand.getCost()));
+                new ICallbackFunction[]{CallbackFunktionen.saveStepCost(distancesForThisPos),
+                        expCand -> callback.accept(expCand.getCost())});
         writeDistances.start(world, fieldX, fieldY, Suche.SearchStrategy.BREADTH_FIRST, false);
 
         return distancesForThisPos;
@@ -114,6 +118,22 @@ public class Felddistanzen {
         }
         return ret.toString();
     }
+
+    public static short distanceToNearestDot(byte[][] view, byte posX, byte posY) {
+        Suche.SearchArgs backup = Suche.searchArgsBackup();
+
+        Suche s = new Suche(false, Zugangsfilter.noWall(), Zielfunktionen.dotEaten(false), null, null);
+        Knoten goalNode = s.start(MyUtil.reformatToTileType(view), posX, posY, Suche.SearchStrategy.BREADTH_FIRST,
+                false);
+
+
+        Suche.saveSearchArgs(backup);
+
+
+        return goalNode != null ? goalNode.getCost() : 0;
+
+    }
+
     public static class Geisterdistanz {
 
         public short[] distanceToAllGhost(int posX, int posY, List<GhostInfo> ghostInfos) {

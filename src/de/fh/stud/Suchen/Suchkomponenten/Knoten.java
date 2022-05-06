@@ -201,8 +201,8 @@ public class Knoten {
         return remainingDots;
     }
 
-    public float heuristicalValue(){
-        return Suche.getHeuristicFunc().calcHeuristic(this);
+    public float heuristicalValue(int functionNr){
+        return Suche.getHeuristicFuncs()[functionNr].calcHeuristic(this);
     }
 
     public static PacmanTileType[][] getStaticWorld() {

@@ -11,32 +11,32 @@ import de.fh.stud.interfaces.IHeuristicFunction;
 public class Suchszenario {
     private final IAccessibilityChecker accessCheck;
     private final IGoalPredicate goalPred;
-    private final IHeuristicFunction heuristicFunc;
+    private final IHeuristicFunction[] heuristicFuncs;
     private final ICallbackFunction[] callbackFuncs;
 
     private final boolean isStateProblem;
 
-    public Suchszenario(IAccessibilityChecker accessCheck, IGoalPredicate goalPred, IHeuristicFunction heuristicFunc) {
-        this(true, accessCheck, goalPred, heuristicFunc, (ICallbackFunction[]) null);
+    public Suchszenario(IAccessibilityChecker accessCheck, IGoalPredicate goalPred,IHeuristicFunction... heuristicFuncs) {
+        this(true, accessCheck, goalPred, heuristicFuncs, null);
     }
 
     public Suchszenario(boolean isStateProblem, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
-                        IHeuristicFunction heuristicFunc) {
-        this(isStateProblem, accessCheck, goalPred, heuristicFunc, (ICallbackFunction[]) null);
+                        IHeuristicFunction... heuristicFuncs) {
+        this(isStateProblem, accessCheck, goalPred, heuristicFuncs, null);
     }
 
     public Suchszenario(boolean isStateProblem, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
-                        IHeuristicFunction heuristicFunc, ICallbackFunction... callbackFuncs) {
+                        IHeuristicFunction[] heuristicFuncs, ICallbackFunction[] callbackFuncs) {
         this.isStateProblem = isStateProblem;
         this.accessCheck = accessCheck;
         this.goalPred = goalPred;
-        this.heuristicFunc = heuristicFunc;
+        this.heuristicFuncs = heuristicFuncs;
+
         this.callbackFuncs = callbackFuncs;
     }
 
     public static Suchszenario eatAllDots() {
-        return new Suchszenario(Zugangsfilter.noWall(), Zielfunktionen.allDotsEaten(),
-                Heuristikfunktionen.remainingDots());
+        return new Suchszenario(Zugangsfilter.noWall(), Zielfunktionen.allDotsEaten(),Heuristikfunktionen.remainingDots());
     }
 
     public static Suchszenario findDestination(int goalX, int goalY) {
@@ -47,7 +47,7 @@ public class Suchszenario {
     public static Suchszenario locateDeadEndExit(byte[][] markedAsOneWays) {
         return new Suchszenario(false, Zugangsfilter.merge(Zugangsfilter.noWall(),
                 (node, newPosX, newPosY) -> markedAsOneWays[newPosX][newPosY] == 0),
-                Zielfunktionen.minimumNeighbours(2), null);
+                Zielfunktionen.minimumNeighbours(2), (IHeuristicFunction[]) null);
     }
 
     // region getter
@@ -59,8 +59,8 @@ public class Suchszenario {
         return goalPred;
     }
 
-    public IHeuristicFunction getHeuristicFunc() {
-        return heuristicFunc;
+    public IHeuristicFunction[] getHeuristicFuncs() {
+        return heuristicFuncs;
     }
 
     public ICallbackFunction[] getCallbackFuncs() {

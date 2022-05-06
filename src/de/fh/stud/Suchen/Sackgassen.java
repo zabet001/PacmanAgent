@@ -103,7 +103,7 @@ public class Sackgassen {
     private static void writeOneWayDepth(PacmanTileType[][] world, Vector2 oneWayEntry, Vector2 oneWayGate) {
         Suche writeDepths = new Suche(false, Zugangsfilter.merge(Zugangsfilter.noWall(),
                 Zugangsfilter.excludePositions(oneWayGate)), null, null,
-                expCand -> deadEndDepth[expCand.getPosX()][expCand.getPosY()] = (byte) (expCand.getCost() +1));
+                CallbackFunktionen.toArray(expCand -> deadEndDepth[expCand.getPosX()][expCand.getPosY()] = (byte) (expCand.getCost() +1)));
         writeDepths.start(world, oneWayEntry.x, oneWayEntry.y, Suche.SearchStrategy.BREADTH_FIRST, false);
 
     }
