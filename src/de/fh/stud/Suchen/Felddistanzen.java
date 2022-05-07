@@ -120,7 +120,7 @@ public class Felddistanzen {
     }
 
     public static short distanceToNearestDot(byte[][] view, byte posX, byte posY) {
-        Suche.SearchArgs backup = Suche.searchArgsBackup();
+        Suche.SearchArgs backup = Suche.backupSearchArgs();
 
         Suche s = new Suche(false, Zugangsfilter.noWall(), Zielfunktionen.dotEaten(false), null, null);
         Knoten goalNode = s.start(MyUtil.reformatToTileType(view), posX, posY, Suche.SearchStrategy.BREADTH_FIRST,

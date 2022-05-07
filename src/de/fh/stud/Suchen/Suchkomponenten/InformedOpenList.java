@@ -44,7 +44,7 @@ public class InformedOpenList extends OpenList {
                 return 0;
             };
             case UCS -> Comparator.comparingInt(Knoten::getCost);
-            // TODO: Vllt. nochmal ueberpruefen
+            // TODO: Vllt. nochmal ueberpruefen, ob so richtig
             case A_STAR -> (o1, o2) -> {
                 int ret;
                 int i;

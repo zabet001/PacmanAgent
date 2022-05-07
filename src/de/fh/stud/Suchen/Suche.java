@@ -177,7 +177,7 @@ public class Suche {
         JOptionPane.showMessageDialog(jf, report.toString());
     }
 
-    public static SearchArgs searchArgsBackup() {
+    public static SearchArgs backupSearchArgs() {
         return new SearchArgs(currentSearchArgs);
     }
 

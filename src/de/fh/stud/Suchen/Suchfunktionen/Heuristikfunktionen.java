@@ -15,6 +15,12 @@ public class Heuristikfunktionen {
         return Knoten::getRemainingDots;
     }
 
+    public static IHeuristicFunction dotNearby() {
+        // TODO: Gucken, ob in nachbarfelder Dots sind
+        return null;
+    }
+
+    // TODO: Heuristik optimieren, sodass nur Distanz gesucht wird, wenn gefundener Dot gefressen wurde
     public static IHeuristicFunction nearestDot() {
         return node ->
                 Felddistanzen.distanceToNearestDot(node.getView(), node.getPosX(), node.getPosY());

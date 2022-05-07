@@ -11,9 +11,6 @@ import de.fh.pacman.enums.PacmanActionEffect;
 
 public class MyAgent_P1 extends PacmanAgent_2021 {
 
-	/*
-	 * TODO Praktikum 1: Fügt gemäß der Aufgabenstellung neue Attribute hinzu, falls notwendig.
-	 */
 	
 	/**
 	 * Die als nächstes auszuführende Aktion
@@ -43,10 +40,7 @@ public class MyAgent_P1 extends PacmanAgent_2021 {
 		if(actionEffect == PacmanActionEffect.GAME_INITIALIZED) {
 			nextAction = PacmanAction.GO_EAST;
 		}
-		
-		/*
-		 * TODO Praktikum 1: Erweitert diese action-Methode gemäß der Aufgabenstellung.
-		 */
+
 		
 		return nextAction;
 	}

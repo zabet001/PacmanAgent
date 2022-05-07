@@ -51,19 +51,6 @@ public class Sackgassen {
         }
     }
 
-    public static void printOneWayDepthMap(PacmanTileType[][] world) {
-        System.out.println();
-
-        for (int i = 0; i < deadEndDepth[0].length; i++) {
-            for (int j = 0; j < deadEndDepth.length; j++) {
-                System.out.printf("%2s ", world[j][i] == PacmanTileType.WALL ? "[]" : deadEndDepth[j][i]);
-            }
-            System.out.println();
-        }
-
-        System.out.println();
-    }
-
     /**
      @return - Tupel(Sackgassenende, Vorgaenger Sackgassenende) -> value Vorgaenger Sackgassenende = null, da Sackgasse
      erster Ordnung
@@ -106,5 +93,18 @@ public class Sackgassen {
                 CallbackFunktionen.toArray(expCand -> deadEndDepth[expCand.getPosX()][expCand.getPosY()] = (byte) (expCand.getCost() +1)));
         writeDepths.start(world, oneWayEntry.x, oneWayEntry.y, Suche.SearchStrategy.BREADTH_FIRST, false);
 
+    }
+
+    public static void printOneWayDepthMap(PacmanTileType[][] world) {
+        System.out.println();
+
+        for (int i = 0; i < deadEndDepth[0].length; i++) {
+            for (int j = 0; j < deadEndDepth.length; j++) {
+                System.out.printf("%2s ", world[j][i] == PacmanTileType.WALL ? "[]" : deadEndDepth[j][i]);
+            }
+            System.out.println();
+        }
+
+        System.out.println();
     }
 }

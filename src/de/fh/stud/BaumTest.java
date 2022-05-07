@@ -14,10 +14,7 @@ public class BaumTest {
 
         //Startposition des Pacman
         int posX = 1, posY = 1;
-        /*
-         * TODO Praktikum 2 [3]: Baut hier basierend auf dem gegebenen
-         * Anfangszustand (siehe view, posX und posY) den Suchbaum auf.
-         */
+
 
 
         // Um Code laufen zu lassen: Attribute auf public umaendern
