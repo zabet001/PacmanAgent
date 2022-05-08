@@ -18,6 +18,8 @@ public class Knoten {
     private static PacmanTileType[][] STATIC_WORLD;
     private static final short COST_LIMIT = 1000;
 
+//    public byte targetX = - 1, targetY = -1;
+
     private final Knoten pred;
     private final byte[][] view;
     private byte posX, posY;
@@ -46,7 +48,11 @@ public class Knoten {
             this.view[posX][posY] = MyUtil.tileToByte(PacmanTileType.EMPTY);
             this.remainingDots = countDots();
             this.cost = 0;
+/*            this.targetX = posX;
+            this.targetY = posY;*/
         } else {
+/*            this.targetX = pred.targetX;
+            this.targetY = pred.targetY;*/
             // Kindknoten
             if (!Suche.isStateSearch() || pred.view[posX][posY] == MyUtil.tileToByte(PacmanTileType.EMPTY)) {
                 this.view = pred.view;

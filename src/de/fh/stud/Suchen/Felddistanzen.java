@@ -4,7 +4,6 @@ import de.fh.pacman.GhostInfo;
 import de.fh.pacman.enums.PacmanTileType;
 import de.fh.stud.MyUtil;
 import de.fh.stud.Suchen.Suchfunktionen.CallbackFunktionen;
-import de.fh.stud.Suchen.Suchfunktionen.Zielfunktionen;
 import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
 import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 import de.fh.stud.interfaces.ICallbackFunction;
@@ -120,18 +119,8 @@ public class Felddistanzen {
     }
 
     public static short distanceToNearestDot(byte[][] view, byte posX, byte posY) {
-        Suche.SearchArgs backup = Suche.backupSearchArgs();
-
-        Suche s = new Suche(false, Zugangsfilter.noWall(), Zielfunktionen.dotEaten(false), null, null);
-        Knoten goalNode = s.start(MyUtil.reformatToTileType(view), posX, posY, Suche.SearchStrategy.BREADTH_FIRST,
-                false);
-
-
-        Suche.saveSearchArgs(backup);
-
-
+        Knoten goalNode = MyUtil.nearestDot(view, posX, posY);
         return goalNode != null ? goalNode.getCost() : 0;
-
     }
 
     public static class Geisterdistanz {

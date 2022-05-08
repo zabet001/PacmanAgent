@@ -37,7 +37,7 @@ public class Suchszenario {
 
     public static Suchszenario eatAllDots() {
         // TODO: Heuristikkombinationen austesten
-        return new Suchszenario(Zugangsfilter.noWall(), Zielfunktionen.allDotsEaten(),Heuristikfunktionen.remainingDots(),Heuristikfunktionen.dotNearby());
+        return new Suchszenario(Zugangsfilter.noWall(), Zielfunktionen.allDotsEaten(),Heuristikfunktionen.remainingDots()/*,Heuristikfunktionen.nearestDotDist()*/);
     }
 
     public static Suchszenario findDestination(int goalX, int goalY) {

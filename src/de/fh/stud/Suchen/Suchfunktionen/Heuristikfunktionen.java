@@ -1,13 +1,15 @@
 package de.fh.stud.Suchen.Suchfunktionen;
 
 import de.fh.kiServer.util.Util;
+import de.fh.pacman.enums.PacmanTileType;
+import de.fh.stud.MyUtil;
 import de.fh.stud.Suchen.Felddistanzen;
 import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 import de.fh.stud.interfaces.IHeuristicFunction;
 
 public class Heuristikfunktionen {
 
-    public static IHeuristicFunction[] toArray(IHeuristicFunction... functions){
+    public static IHeuristicFunction[] toArray(IHeuristicFunction... functions) {
         return functions;
     }
 
@@ -16,18 +18,39 @@ public class Heuristikfunktionen {
     }
 
     public static IHeuristicFunction dotNearby() {
-        // TODO: Gucken, ob in nachbarfelder Dots sind
-        return null;
+        return node -> {
+            for (byte[] neighbourOffset : Knoten.NEIGHBOUR_POS)
+                if (MyUtil.byteToTile(
+                        node.getView()[node.getPosX() + neighbourOffset[0]][node.getPosY() + neighbourOffset[1]])
+                        == PacmanTileType.DOT) {
+                    return 0;
+                }
+            return 1;
+        };
     }
 
-    // TODO: Heuristik optimieren, sodass nur Distanz gesucht wird, wenn gefundener Dot gefressen wurde
-    public static IHeuristicFunction nearestDot() {
-        return node ->
-                Felddistanzen.distanceToNearestDot(node.getView(), node.getPosX(), node.getPosY());
+    public static IHeuristicFunction nearestDotDist() {
+        return node -> Felddistanzen.distanceToNearestDot(node.getView(), node.getPosX(), node.getPosY());
+
+        // Optimierung: Benoetigt Attribut target in Knoten, um zwischenzuspeichern, ob der gesuchte Dot erreicht wurde
+        /*
+        return node -> {
+            if (node.getPosX() == node.targetX
+                    && node.getPosY() == node.targetY) {
+                Knoten nearestDot = MyUtil.nearestDot(node.getView(), node.getPosX(), node.getPosY());
+                if (nearestDot == null) {
+                    return 0;
+                }
+                node.targetX = nearestDot.getPosX();
+                node.targetY = nearestDot.getPosY();
+            }
+            return Felddistanzen.getDistance(node.getPosX(), node.getPosY(), node.targetX, node.targetY);
+        };*/
     }
 
     public static IHeuristicFunction remainingAndNearestDot() {
-        return node -> (float) node.getRemainingDots() + (Heuristikfunktionen.nearestDot().calcHeuristic(node) / Felddistanzen.getMaxDistance());
+        return node -> (float) node.getRemainingDots() + (Heuristikfunktionen.nearestDotDist().calcHeuristic(node)
+                / Felddistanzen.getMaxDistance());
     }
 
     public static IHeuristicFunction manhattanToTarget(int goalX, int goalY) {

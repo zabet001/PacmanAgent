@@ -2,6 +2,9 @@ package de.fh.stud;
 
 import de.fh.pacman.enums.PacmanAction;
 import de.fh.pacman.enums.PacmanTileType;
+import de.fh.stud.Suchen.Suche;
+import de.fh.stud.Suchen.Suchfunktionen.Zielfunktionen;
+import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
 import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 
 import java.util.Arrays;
@@ -21,7 +24,7 @@ public class MyUtil {
     }
 
     public static PacmanTileType byteToTile(byte b) {
-        return b < PacmanTileType.values().length ? PacmanTileType.values()[b] : null;
+        return PacmanTileType.values()[b];
     }
 
     public static byte[][] createByteView(PacmanTileType[][] world) {
@@ -89,5 +92,18 @@ public class MyUtil {
         T[] ret = Arrays.copyOf(a,a.length+b.length);
         System.arraycopy(b,0,ret,a.length,b.length);
         return ret;
+    }
+
+    public static Knoten nearestDot(byte[][] view, byte posX, byte posY) {
+        Suche.SearchArgs backup = Suche.backupSearchArgs();
+
+        Suche s = new Suche(false, Zugangsfilter.noWall(), Zielfunktionen.dotEaten(false), null, null);
+        Knoten goalNode = s.start(reformatToTileType(view), posX, posY, Suche.SearchStrategy.BREADTH_FIRST,
+                                  false);
+
+        Suche.saveSearchArgs(backup);
+
+        return goalNode;
+
     }
 }

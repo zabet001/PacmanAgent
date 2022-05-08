@@ -22,7 +22,7 @@ public class Suche {
 
     public static final int MAX_SOLUTION_LIMIT = Integer.MAX_VALUE;
     private static final boolean SHOW_RESULTS = true;
-    private static final boolean PRINT_AVG_RUNTIME = false;
+    public static boolean PRINT_AVG_RUNTIME = false;
 
     public static boolean searchRunning = false;
     public static List<Double> runTimes = new LinkedList<>();
@@ -31,7 +31,7 @@ public class Suche {
 
     // TODO: Heuristiken, Kosten, Goal etc. in Suche teilen
 
-    static class SearchArgs {
+    public static class SearchArgs {
 
         private boolean stateSearch;
         private IAccessibilityChecker accessCheck;
