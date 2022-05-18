@@ -63,9 +63,9 @@ public class MyAgent_P3 extends PacmanAgent_2021 {
         long start = System.nanoTime();
         PacmanTileType[][] world = startInfo.getPercept().getView();
         Sackgassen.initDeadEndDepth(world);
-        // Sackgassen.printOneWayDepthMap(world);
+//        Sackgassen.printOneWayDepthMap(world);
         Felddistanzen.initDistances(world);
-        // Felddistanzen.printAllDistances(world);
+//        Felddistanzen.printAllDistances(world);
         MyUtil.println("Laufzeit fuer Init von Sackgassen + Felddistanzen: " + Util.timeSince(start) + "\n-----");
     }
 

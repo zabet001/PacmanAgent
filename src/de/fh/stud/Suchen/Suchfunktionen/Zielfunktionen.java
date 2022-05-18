@@ -3,6 +3,7 @@ package de.fh.stud.Suchen.Suchfunktionen;
 import de.fh.pacman.enums.PacmanTileType;
 import de.fh.stud.MyUtil;
 import de.fh.stud.Suchen.Suchkomponenten.Knoten;
+import de.fh.stud.interfaces.IAccessibilityChecker;
 import de.fh.stud.interfaces.IGoalPredicate;
 
 public class Zielfunktionen {
@@ -32,8 +33,8 @@ public class Zielfunktionen {
         return node -> node.getPosX() == goalx && node.getPosY() == goaly;
     }
 
-    public static IGoalPredicate minimumNeighbours(int numberOfNeighbours) {
-        return node -> Knoten.nodeNeighbourCnt(node) >= numberOfNeighbours;
+    public static IGoalPredicate minimumNeighbours(int numberOfNeighbours, IAccessibilityChecker accessibilityChecker) {
+        return node -> Knoten.nodeNeighbourCnt(node,accessibilityChecker) >= numberOfNeighbours;
     }
 
 }

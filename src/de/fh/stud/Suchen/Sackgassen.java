@@ -26,6 +26,9 @@ public class Sackgassen {
         /** Tupel: (Sackgassenende,Vorgaenger), um spaterer das erste Feld in der Sackgasse wiederzufinden*/
         List<SimpleEntry<Vector2, Vector2>> oneWays = oneWayEndsFirstOrder(world);
 
+        System.out.println("Vor Schritt 2:");
+        printOneWayDepthMap(world);
+
         /* Schritt 2: Fuer alle Sackgassen: Anfangspos suchen und fuer Endpos ersetzen, dabei CALLBACK: ALLE
         besuchten Felder markieren mit cost -1
          -> Sackgassen letzter Stufe werden "temporaer geschlossen": mehrstufige sackgassen werden einstufig*/
@@ -38,6 +41,10 @@ public class Sackgassen {
             } else
                 oneWays.remove(i--);
         }
+
+        System.out.println("Nach Schritt 2:");
+        printOneWayDepthMap(world);
+
 
         /* Schritt 3: Suche starten bei Vorgaenger der Sackgassenenden, die immer noch 0 als Kosten besitzen
         (alle Sackgassen mit Kosten -1 sind Teil einer tieferen Sackgasse: deren Tiefe wird automatisch aktualisiert)

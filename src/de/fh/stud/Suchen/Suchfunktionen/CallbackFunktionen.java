@@ -20,9 +20,6 @@ public class CallbackFunktionen {
         return expCand -> visitedMap[expCand.getPosX()][expCand.getPosY()] = true;
     }
 
-    public static ICallbackFunction saveVisitedType(List<PacmanTileType> visitedTypesList) {
-        return expCand -> visitedTypesList.add(Knoten.getStaticWorld()[expCand.getPosX()][expCand.getPosY()]);
-    }
 
     public static ICallbackFunction saveVisitedPos(List<Vector2> visitedList, boolean duplicates) {
         return expCand -> {
@@ -31,15 +28,6 @@ public class CallbackFunktionen {
         };
     }
 
-    public static ICallbackFunction saveVisited(List<Vector2> visitedList, List<PacmanTileType> visitedTypesList,
-                                                boolean duplicates) {
-        return expCand -> {
-            if (duplicates || !visitedList.contains(expCand.getPosition())) {
-                saveVisitedPos(visitedList,true).callback(expCand); // duplicates kann hier ignoriert werden
-                saveVisitedType(visitedTypesList).callback(expCand);
-            }
-        };
-    }
 
     public static <T> ICallbackFunction setVisitedValue(T[][] map, T value) {
         return expCand -> map[expCand.getPosX()][expCand.getPosY()] = value;

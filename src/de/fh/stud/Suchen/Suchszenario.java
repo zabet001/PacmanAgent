@@ -16,7 +16,8 @@ public class Suchszenario {
 
     private final boolean isStateProblem;
 
-    public Suchszenario(IAccessibilityChecker accessCheck, IGoalPredicate goalPred,IHeuristicFunction... heuristicFuncs) {
+    public Suchszenario(IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
+                        IHeuristicFunction... heuristicFuncs) {
         this(true, accessCheck, goalPred, heuristicFuncs, null);
     }
 
@@ -37,18 +38,20 @@ public class Suchszenario {
 
     public static Suchszenario eatAllDots() {
         // TODO: Heuristikkombinationen austesten
-        return new Suchszenario(Zugangsfilter.noWall(), Zielfunktionen.allDotsEaten(),Heuristikfunktionen.remainingDots()/*,Heuristikfunktionen.nearestDotDist()*/);
+        return new Suchszenario(Zugangsfilter.noWall(), Zielfunktionen.allDotsEaten(),
+                                Heuristikfunktionen.remainingDots()/*,Heuristikfunktionen.nearestDotDist()*/);
     }
 
     public static Suchszenario findDestination(int goalX, int goalY) {
-        return new Suchszenario(false, Zugangsfilter.safeToWalkOn(), Zielfunktionen.reachedDestination(goalX,
-                goalY), Heuristikfunktionen.manhattanToTarget(goalX, goalY));
+        return new Suchszenario(false, Zugangsfilter.safeToWalkOn(), Zielfunktionen.reachedDestination(goalX, goalY),
+                                Heuristikfunktionen.manhattanToTarget(goalX, goalY));
     }
 
     public static Suchszenario locateDeadEndExit(byte[][] markedAsOneWays) {
-        return new Suchszenario(false, Zugangsfilter.merge(Zugangsfilter.noWall(),
-                (node, newPosX, newPosY) -> markedAsOneWays[newPosX][newPosY] == 0),
-                Zielfunktionen.minimumNeighbours(2), (IHeuristicFunction[]) null);
+        IAccessibilityChecker passFilter = Zugangsfilter.merge(Zugangsfilter.noWall(), (node, newPosX, newPosY) ->
+                markedAsOneWays[newPosX][newPosY] == 0);
+        return new Suchszenario(false, passFilter, Zielfunktionen.minimumNeighbours(2, passFilter),
+                                (IHeuristicFunction[]) null);
     }
 
     // region getter
