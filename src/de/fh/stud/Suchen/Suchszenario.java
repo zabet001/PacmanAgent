@@ -9,54 +9,89 @@ import de.fh.stud.interfaces.IGoalPredicate;
 import de.fh.stud.interfaces.IHeuristicFunction;
 
 public class Suchszenario {
-    private final IAccessibilityChecker accessCheck;
+    private final IAccessibilityChecker[] accessChecks;
     private final IGoalPredicate goalPred;
     private final IHeuristicFunction[] heuristicFuncs;
     private final ICallbackFunction[] callbackFuncs;
 
     private final boolean isStateProblem;
 
-    public Suchszenario(IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
-                        IHeuristicFunction... heuristicFuncs) {
-        this(true, accessCheck, goalPred, heuristicFuncs, null);
+    public static final class SuchszenarioBuilder {
+        private IAccessibilityChecker[] accessChecks;
+        private IGoalPredicate goalPred;
+        private IHeuristicFunction[] heuristicFuncs;
+        private boolean isStateProblem = true;
+        private ICallbackFunction[] callbackFuncs;
+
+        public SuchszenarioBuilder setAccessChecks(IAccessibilityChecker... accessChecks) {
+            this.accessChecks = accessChecks;
+            return this;
+        }
+
+        public SuchszenarioBuilder setGoalPred(IGoalPredicate goalPred) {
+            this.goalPred = goalPred;
+            return this;
+        }
+
+        public SuchszenarioBuilder setHeuristicFuncs(IHeuristicFunction... heuristicFuncs) {
+            this.heuristicFuncs = heuristicFuncs;
+            return this;
+        }
+
+        public SuchszenarioBuilder setIsStateProblem(boolean isStateProblem) {
+            this.isStateProblem = isStateProblem;
+            return this;
+        }
+
+        public SuchszenarioBuilder setCallbackFuncs(ICallbackFunction... callbackFuncs) {
+            this.callbackFuncs = callbackFuncs;
+            return this;
+        }
+
+        public Suchszenario createSuchszenario() {
+            if (accessChecks == null || accessChecks.length == 0) {
+                throw new IllegalArgumentException("Missing " + IAccessibilityChecker.class.getSimpleName());
+            }
+            return new Suchszenario(this);
+        }
     }
 
-    public Suchszenario(boolean isStateProblem, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
-                        IHeuristicFunction... heuristicFuncs) {
-        this(isStateProblem, accessCheck, goalPred, heuristicFuncs, null);
-    }
-
-    public Suchszenario(boolean isStateProblem, IAccessibilityChecker accessCheck, IGoalPredicate goalPred,
-                        IHeuristicFunction[] heuristicFuncs, ICallbackFunction[] callbackFuncs) {
-        this.isStateProblem = isStateProblem;
-        this.accessCheck = accessCheck;
-        this.goalPred = goalPred;
-        this.heuristicFuncs = heuristicFuncs;
-
-        this.callbackFuncs = callbackFuncs;
+    public Suchszenario(SuchszenarioBuilder b) {
+        this.isStateProblem = b.isStateProblem;
+        this.accessChecks = b.accessChecks;
+        this.goalPred = b.goalPred;
+        this.heuristicFuncs = b.heuristicFuncs;
+        this.callbackFuncs = b.callbackFuncs;
     }
 
     public static Suchszenario eatAllDots() {
-        // TODO: Heuristikkombinationen austesten
-        return new Suchszenario(Zugangsfilter.noWall(), Zielfunktionen.allDotsEaten(),
-                                Heuristikfunktionen.remainingDots()/*,Heuristikfunktionen.nearestDotDist()*/);
+        return new SuchszenarioBuilder()
+                .setAccessChecks(Zugangsfilter.noWall())
+                .setGoalPred(Zielfunktionen.allDotsEaten())
+                .setHeuristicFuncs(Heuristikfunktionen.remainingDots())
+                .createSuchszenario();
     }
 
     public static Suchszenario findDestination(int goalX, int goalY) {
-        return new Suchszenario(false, Zugangsfilter.safeToWalkOn(), Zielfunktionen.reachedDestination(goalX, goalY),
-                                Heuristikfunktionen.manhattanToTarget(goalX, goalY));
+        return new SuchszenarioBuilder()
+                .setIsStateProblem(false)
+                .setAccessChecks(Zugangsfilter.safeToWalkOn())
+                .setGoalPred(Zielfunktionen.reachedDestination(goalX, goalY))
+                .setHeuristicFuncs(Heuristikfunktionen.manhattanToTarget(goalX, goalY))
+                .createSuchszenario();
     }
 
-    public static Suchszenario locateDeadEndExit(byte[][] markedAsOneWays) {
-        IAccessibilityChecker passFilter = Zugangsfilter.merge(Zugangsfilter.noWall(), (node, newPosX, newPosY) ->
-                markedAsOneWays[newPosX][newPosY] == 0);
-        return new Suchszenario(false, passFilter, Zielfunktionen.minimumNeighbours(2, passFilter),
-                                (IHeuristicFunction[]) null);
+    public static Suchszenario locateDeadEndExit() {
+        return new SuchszenarioBuilder()
+                .setIsStateProblem(false)
+                .setAccessChecks(Zugangsfilter.noWall())
+                .setGoalPred(node -> Sackgassen.deadEndDepth[node.getPosX()][node.getPosY()] == 0)
+                .createSuchszenario();
     }
 
     // region getter
-    public IAccessibilityChecker getAccessCheck() {
-        return accessCheck;
+    public IAccessibilityChecker[] getAccessChecks() {
+        return accessChecks;
     }
 
     public IGoalPredicate getGoalPred() {
@@ -75,4 +110,5 @@ public class Suchszenario {
         return isStateProblem;
     }
     // endregion
+
 }

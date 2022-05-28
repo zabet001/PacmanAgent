@@ -2,11 +2,11 @@ package de.fh.stud.Suchen.Suchkomponenten;
 
 import java.util.HashSet;
 
-public class StateClosedList extends ClosedList{
+public class StateClosedList extends ClosedList {
     private HashSet<Knoten> closedList;
 
-    public StateClosedList(){
-         closedList = new HashSet<>();
+    public StateClosedList() {
+        closedList = new HashSet<>();
     }
 
     @Override

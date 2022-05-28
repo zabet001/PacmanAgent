@@ -8,20 +8,11 @@ import de.fh.stud.interfaces.IGoalPredicate;
 
 public class Zielfunktionen {
 
-    public static IGoalPredicate merge(IGoalPredicate... goalPredicates) {
-        return (node) -> {
-            for (IGoalPredicate goalPredicate : goalPredicates) {
-                if (!goalPredicate.isGoalNode(node))
-                    return false;
-            }
-            return true;
-        };
-    }
-
-    public static IGoalPredicate dotEaten(boolean isStateSearch) {
-        if (isStateSearch)
-            return node -> node.getPred() != null && node.getRemainingDots() < node.getPred().getRemainingDots();
-        return node -> node.getPred() != null && MyUtil.byteToTile(node.getPred().getView()[node.getPosX()][node.getPosY()]) == PacmanTileType.DOT;
+    public static IGoalPredicate dotEaten() {
+        return node -> node.getPred() != null && MyUtil.byteToTile(node
+                                                                           .getPred()
+                                                                           .getView()[node.getPosX()][node.getPosY()])
+                == PacmanTileType.DOT;
     }
 
     public static IGoalPredicate allDotsEaten() {
@@ -33,8 +24,8 @@ public class Zielfunktionen {
         return node -> node.getPosX() == goalx && node.getPosY() == goaly;
     }
 
-    public static IGoalPredicate minimumNeighbours(int numberOfNeighbours, IAccessibilityChecker accessibilityChecker) {
-        return node -> Knoten.nodeNeighbourCnt(node,accessibilityChecker) >= numberOfNeighbours;
+    public static IGoalPredicate minimumNeighbours(int numberOfNeighbours, IAccessibilityChecker... accessChecks) {
+        return node -> Knoten.nodeNeighbourCnt(node, accessChecks) >= numberOfNeighbours;
     }
 
 }

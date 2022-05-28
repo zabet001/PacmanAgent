@@ -1,4 +1,3 @@
 package de.fh.stud.interfaces;
 
-public interface ISearchFunction{
-}
+public interface ISearchFunction {}

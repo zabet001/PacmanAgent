@@ -9,7 +9,7 @@ public abstract class OpenList {
     public static OpenList buildOpenList(Suche.SearchStrategy strategy, IHeuristicFunction[] heuristicFunctions) {
         return switch (strategy) {
             case DEPTH_FIRST, BREADTH_FIRST -> new UninformedOpenList(strategy);
-            default -> new InformedOpenList(strategy,heuristicFunctions);
+            default -> new InformedOpenList(strategy, heuristicFunctions);
         };
     }
 

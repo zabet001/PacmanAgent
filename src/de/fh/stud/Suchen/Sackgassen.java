@@ -4,6 +4,7 @@ import de.fh.kiServer.util.Vector2;
 import de.fh.pacman.enums.PacmanTileType;
 import de.fh.stud.MyUtil;
 import de.fh.stud.Suchen.Suchfunktionen.CallbackFunktionen;
+import de.fh.stud.Suchen.Suchfunktionen.Zielfunktionen;
 import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
 import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 
@@ -26,25 +27,24 @@ public class Sackgassen {
         /** Tupel: (Sackgassenende,Vorgaenger), um spaterer das erste Feld in der Sackgasse wiederzufinden*/
         List<SimpleEntry<Vector2, Vector2>> oneWays = oneWayEndsFirstOrder(world);
 
-        System.out.println("Vor Schritt 2:");
-        printOneWayDepthMap(world);
 
         /* Schritt 2: Fuer alle Sackgassen: Anfangspos suchen und fuer Endpos ersetzen, dabei CALLBACK: ALLE
         besuchten Felder markieren mit cost -1
          -> Sackgassen letzter Stufe werden "temporaer geschlossen": mehrstufige sackgassen werden einstufig*/
         for (int i = 0; i < oneWays.size(); i++) {
-            SimpleEntry<Vector2, Vector2> oneWayStartTuple = locateStartOfOneWay(world, oneWays.get(i).getKey().x,
-                    oneWays.get(i).getKey().y);
+            SimpleEntry<Vector2, Vector2> oneWayStartTuple = locateStartOfOneWay(world, oneWays
+                    .get(i)
+                    .getKey().x, oneWays
+                                                                                         .get(i)
+                                                                                         .getKey().y);
             if (oneWayStartTuple != null) {
                 oneWays.add(i, oneWayStartTuple);
                 oneWays.remove(i + 1);
-            } else
+            }
+            else {
                 oneWays.remove(i--);
+            }
         }
-
-        System.out.println("Nach Schritt 2:");
-        printOneWayDepthMap(world);
-
 
         /* Schritt 3: Suche starten bei Vorgaenger der Sackgassenenden, die immer noch 0 als Kosten besitzen
         (alle Sackgassen mit Kosten -1 sind Teil einer tieferen Sackgasse: deren Tiefe wird automatisch aktualisiert)
@@ -78,16 +78,25 @@ public class Sackgassen {
      @return - Tupel(Sackgassenende, Sackgassenanfang von Sackgasse naechster Tiefe)
      */
     private static SimpleEntry<Vector2, Vector2> locateStartOfOneWay(PacmanTileType[][] world, int posX, int posY) {
+        Knoten oneWayStart = new Suche.Builder()
+                // Besuchte Sackgassen mit -1 markieren
+                .callbackFuncs(CallbackFunktionen.setVisitedValue(deadEndDepth, ((byte) -1)))
+                // Besuchte Sackgassen sollen nicht erneut betreten werden
+                .accessChecks(Zugangsfilter.noWall(), (node, newPosX, newPosY) -> deadEndDepth[newPosX][newPosY] == 0)
+                // Andere Sackgassen sollen als Waende betrachtet werden
+                .goalPred(Zielfunktionen.minimumNeighbours(2, Zugangsfilter.noWall(),
+                                                           (node, newPosX, newPosY) -> deadEndDepth[newPosX][newPosY]
+                                                                   == 0))
+                .stateSearch(false)
+                .build()
+                .start(world, posX, posY, Suche.SearchStrategy.DEPTH_FIRST);
 
-        Knoten oneWayStart = new Suche(Suchszenario.locateDeadEndExit(deadEndDepth),
-                CallbackFunktionen.setVisitedValue(deadEndDepth, (byte) -1))
-                /*CallbackFunktionen.saveVisited(blockedFields, blockedFieldType, false),
-                CallbackFunktionen.setVisitedValue(world,PacmanTileType.WALL))*/.start(world, posX, posY,
-                        Suche.SearchStrategy.DEPTH_FIRST, false);
-
-        if (oneWayStart == null)
+        if (oneWayStart == null) {
             return null;
-        return new SimpleEntry<>(oneWayStart.getPosition(), oneWayStart.getPred().getPosition());
+        }
+        return new SimpleEntry<>(oneWayStart.getPosition(), oneWayStart
+                .getPred()
+                .getPosition());
     }
 
     /**
@@ -95,10 +104,13 @@ public class Sackgassen {
      @param oneWayGate - Wird als Wand betrachtet, nicht hier expandieren
      */
     private static void writeOneWayDepth(PacmanTileType[][] world, Vector2 oneWayEntry, Vector2 oneWayGate) {
-        Suche writeDepths = new Suche(false, Zugangsfilter.merge(Zugangsfilter.noWall(),
-                Zugangsfilter.excludePositions(oneWayGate)), null, null,
-                CallbackFunktionen.toArray(expCand -> deadEndDepth[expCand.getPosX()][expCand.getPosY()] = (byte) (expCand.getCost() +1)));
-        writeDepths.start(world, oneWayEntry.x, oneWayEntry.y, Suche.SearchStrategy.BREADTH_FIRST, false);
+        Suche writeDepths = new Suche.Builder()
+                .stateSearch(false)
+                .accessChecks(Zugangsfilter.noWall(), Zugangsfilter.excludePositions(oneWayGate))
+                .callbackFuncs(
+                        expCand -> deadEndDepth[expCand.getPosX()][expCand.getPosY()] = (byte) (expCand.getCost() + 1))
+                .build();
+        writeDepths.start(world, oneWayEntry.x, oneWayEntry.y, Suche.SearchStrategy.BREADTH_FIRST);
 
     }
 

@@ -1,16 +1,11 @@
 package de.fh.stud.Suchen.Suchfunktionen;
 
 import de.fh.kiServer.util.Vector2;
-import de.fh.pacman.enums.PacmanTileType;
-import de.fh.stud.Suchen.Suchkomponenten.Knoten;
 import de.fh.stud.interfaces.ICallbackFunction;
 
 import java.util.List;
 
 public class CallbackFunktionen {
-    public static ICallbackFunction[] toArray(ICallbackFunction... functions){
-        return functions;
-    }
 
     public static ICallbackFunction saveStepCost(short[][] costMap) {
         return expCand -> costMap[expCand.getPosX()][expCand.getPosY()] = expCand.getCost();
@@ -20,14 +15,13 @@ public class CallbackFunktionen {
         return expCand -> visitedMap[expCand.getPosX()][expCand.getPosY()] = true;
     }
 
-
     public static ICallbackFunction saveVisitedPos(List<Vector2> visitedList, boolean duplicates) {
         return expCand -> {
-            if (duplicates || !visitedList.contains(expCand.getPosition()))
+            if (duplicates || !visitedList.contains(expCand.getPosition())) {
                 visitedList.add(expCand.getPosition());
+            }
         };
     }
-
 
     public static <T> ICallbackFunction setVisitedValue(T[][] map, T value) {
         return expCand -> map[expCand.getPosX()][expCand.getPosY()] = value;

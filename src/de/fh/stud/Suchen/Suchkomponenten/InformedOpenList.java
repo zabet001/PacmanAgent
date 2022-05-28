@@ -9,9 +9,9 @@ import java.util.PriorityQueue;
 public class InformedOpenList extends OpenList {
     private final PriorityQueue<Knoten> openList;
 
-    public InformedOpenList(Suche.SearchStrategy searchStrategy,IHeuristicFunction[] heuristicFuncs) {
+    public InformedOpenList(Suche.SearchStrategy searchStrategy, IHeuristicFunction[] heuristicFuncs) {
         super(searchStrategy);
-        openList = new PriorityQueue<>(getInsertionCriteria(searchStrategy,heuristicFuncs));
+        openList = new PriorityQueue<>(getInsertionCriteria(searchStrategy, heuristicFuncs));
     }
 
     @Override
@@ -34,25 +34,29 @@ public class InformedOpenList extends OpenList {
         return openList.size();
     }
 
-    private static Comparator<Knoten> getInsertionCriteria(Suche.SearchStrategy strategy,IHeuristicFunction[] heuristicFunctions) {
+    private static Comparator<Knoten> getInsertionCriteria(Suche.SearchStrategy strategy,
+                                                           IHeuristicFunction[] heuristicFunctions) {
         return switch (strategy) {
             case GREEDY -> (o1, o2) -> {
                 int ret;
                 for (int i = 0; i < heuristicFunctions.length; i++) {
-                    if ((ret = Double.compare(o1.heuristicalValue(heuristicFunctions,i), o2.heuristicalValue(heuristicFunctions,i))) != 0)
+                    if ((ret = Double.compare(o1.heuristicalValue(heuristicFunctions, i),
+                                              o2.heuristicalValue(heuristicFunctions, i))) != 0) {
                         return ret;
+                    }
                 }
                 return 0;
             };
             case UCS -> Comparator.comparingInt(Knoten::getCost);
-            // TODO: Vllt. nochmal ueberpruefen, ob so richtig
             case A_STAR -> (o1, o2) -> {
                 int ret;
                 int i;
                 for (i = 0; i < heuristicFunctions.length; i++) {
-                    ret = Double.compare(o1.getCost()+o1.heuristicalValue(heuristicFunctions,i), o2.getCost()+o2.heuristicalValue(heuristicFunctions,i));
-                    if (ret != 0)
+                    ret = Double.compare(o1.getCost() + o1.heuristicalValue(heuristicFunctions, i),
+                                         o2.getCost() + o2.heuristicalValue(heuristicFunctions, i));
+                    if (ret != 0) {
                         return ret;
+                    }
                 }
                 return 0;
             };

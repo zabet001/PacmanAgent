@@ -6,23 +6,11 @@ import de.fh.stud.MyUtil;
 import de.fh.stud.interfaces.IAccessibilityChecker;
 
 public class Zugangsfilter {
-
-    public static IAccessibilityChecker merge(IAccessibilityChecker... accessibilityCheckers) {
-        return (node, newPosX, newPosY) -> {
-            for (IAccessibilityChecker accessibilityChecker : accessibilityCheckers) {
-                if (!accessibilityChecker.isAccessible(node, newPosX, newPosY))
-                    return false;
-            }
-            return true;
-        };
-    }
-
     public static IAccessibilityChecker safeToWalkOn() {
         return (node, newPosX, newPosY) -> {
             PacmanTileType field = MyUtil.byteToTile(node.getView()[newPosX][newPosY]);
             return field == PacmanTileType.EMPTY || field == PacmanTileType.DOT || field == PacmanTileType.POWERPILL;
         };
-
     }
 
     public static IAccessibilityChecker noWall() {
@@ -32,8 +20,9 @@ public class Zugangsfilter {
     public static IAccessibilityChecker excludePositions(Vector2... positions) {
         return (node, newPosX, newPosY) -> {
             for (Vector2 pos : positions) {
-                if (pos.x == newPosX && pos.y == newPosY)
+                if (pos.x == newPosX && pos.y == newPosY) {
                     return false;
+                }
             }
             return true;
         };

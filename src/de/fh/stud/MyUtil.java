@@ -86,6 +86,21 @@ public class MyUtil {
         System.out.println(s);
     }
 
+    public static Knoten nearestDot(byte[][] view, byte posX, byte posY) {
+        Suche s = new Suche.Builder()
+                .stateSearch(false)
+                .accessChecks(Zugangsfilter.noWall())
+                .goalPred(Zielfunktionen.dotEaten())
+                .build();
+        return s.start(view, posX, posY, Suche.SearchStrategy.BREADTH_FIRST);
+
+    }
+
+    @SafeVarargs
+    public static <T> T[] toArray(T... elements) {
+        return elements;
+    }
+
     public static <T> T[] mergeArrays(T[] a, T[] b) {
         if (a == null) {
             return b;
@@ -96,12 +111,5 @@ public class MyUtil {
         T[] ret = Arrays.copyOf(a, a.length + b.length);
         System.arraycopy(b, 0, ret, a.length, b.length);
         return ret;
-    }
-
-    public static Knoten nearestDot(byte[][] view, byte posX, byte posY) {
-
-        Suche s = new Suche(false, Zugangsfilter.noWall(), Zielfunktionen.dotEaten(false), null, null);
-        return s.start(reformatToTileType(view), posX, posY, Suche.SearchStrategy.BREADTH_FIRST, false);
-
     }
 }

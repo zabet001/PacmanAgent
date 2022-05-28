@@ -6,7 +6,6 @@ import de.fh.stud.MyUtil;
 import de.fh.stud.Suchen.Suchfunktionen.CallbackFunktionen;
 import de.fh.stud.Suchen.Suchfunktionen.Zugangsfilter;
 import de.fh.stud.Suchen.Suchkomponenten.Knoten;
-import de.fh.stud.interfaces.ICallbackFunction;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,8 +26,9 @@ public class Felddistanzen {
             for (int j = 0; j < world[0].length; j++) {
                 if (world[i][j] != PacmanTileType.WALL) {
                     distanceMap[i][j] = allDistances(world, i, j, i1 -> {
-                        if (i1 > maxDist.get())
+                        if (i1 > maxDist.get()) {
                             maxDist.set(i1);
+                        }
                     });
 
                 }
@@ -41,21 +41,28 @@ public class Felddistanzen {
     private static short[][] allDistances(PacmanTileType[][] world, int fieldX, int fieldY, Consumer<Short> callback) {
         short[][] distancesForThisPos = new short[world.length][world[0].length];
 
-        Suche writeDistances = new Suche(false, Zugangsfilter.noWall(), null, null,
-                new ICallbackFunction[]{CallbackFunktionen.saveStepCost(distancesForThisPos),
-                        expCand -> callback.accept(expCand.getCost())});
-        writeDistances.start(world, fieldX, fieldY, Suche.SearchStrategy.BREADTH_FIRST, false);
+        Suche writeDistances = new Suche.Builder()
+                .stateSearch(false)
+                .accessChecks(Zugangsfilter.noWall())
+                .callbackFuncs(CallbackFunktionen.saveStepCost(distancesForThisPos),
+                               expCand -> callback.accept(expCand.getCost()))
+                .build();
+        writeDistances.start(world, fieldX, fieldY, Suche.SearchStrategy.BREADTH_FIRST);
 
         return distancesForThisPos;
     }
 
     private static short calcMaxDistance() {
         short max = 0;
-        for (int i = 0; i < distanceMap.length; i++)
-            for (int j = 0; j < distanceMap[0].length; j++)
-                if (distanceMap[i][j] != null)
-                    if (calcMaxDistance(i, j) > max)
+        for (int i = 0; i < distanceMap.length; i++) {
+            for (int j = 0; j < distanceMap[0].length; j++) {
+                if (distanceMap[i][j] != null) {
+                    if (calcMaxDistance(i, j) > max) {
                         max = calcMaxDistance(i, j);
+                    }
+                }
+            }
+        }
 
         return max;
     }
@@ -64,8 +71,9 @@ public class Felddistanzen {
         short max = 0;
         for (int i = 0; i < distanceMap.length; i++) {
             for (int j = 0; j < distanceMap[0].length; j++) {
-                if (distanceMap[posX][posY][i][j] > max)
+                if (distanceMap[posX][posY][i][j] > max) {
                     max = distanceMap[posX][posY][i][j];
+                }
 
             }
         }
@@ -110,8 +118,8 @@ public class Felddistanzen {
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i < distanceMap[0].length; i++) {
             for (int j = 0; j < distanceMap.length; j++) {
-                ret.append(String.format("[%2s]", world[j][i] == PacmanTileType.WALL ? "--" :
-                        distanceMap[posX][posY][j][i]));
+                ret.append(String.format("[%2s]",
+                                         world[j][i] == PacmanTileType.WALL ? "--" : distanceMap[posX][posY][j][i]));
             }
             ret.append("\n");
         }
@@ -145,8 +153,9 @@ public class Felddistanzen {
         public short maximumGhostDistance(int posX, int posY, List<GhostInfo> ghostInfos) {
             short maxDistance = 0;
             for (short ghostDistance : distanceToAllGhost(posX, posY, ghostInfos)) {
-                if (ghostDistance > maxDistance)
+                if (ghostDistance > maxDistance) {
                     maxDistance = ghostDistance;
+                }
             }
             return maxDistance;
         }
@@ -154,8 +163,9 @@ public class Felddistanzen {
         public short minimumGhostDistance(int posX, int posY, List<GhostInfo> ghostInfos) {
             short minDistance = Short.MAX_VALUE;
             for (short ghostDistance : distanceToAllGhost(posX, posY, ghostInfos)) {
-                if (ghostDistance < minDistance)
+                if (ghostDistance < minDistance) {
                     minDistance = ghostDistance;
+                }
             }
             return minDistance;
         }
