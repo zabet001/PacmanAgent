@@ -14,41 +14,41 @@ public class Suchszenario {
     private final IHeuristicFunction[] heuristicFuncs;
     private final ICallbackFunction[] callbackFuncs;
 
-    private final boolean isStateProblem;
+    private final boolean stateProblem;
 
     public static final class SuchszenarioBuilder {
         private IAccessibilityChecker[] accessChecks;
         private IGoalPredicate goalPred;
         private IHeuristicFunction[] heuristicFuncs;
-        private boolean isStateProblem = true;
+        private boolean stateProblem = true;
         private ICallbackFunction[] callbackFuncs;
 
-        public SuchszenarioBuilder setAccessChecks(IAccessibilityChecker... accessChecks) {
+        private SuchszenarioBuilder setAccessChecks(IAccessibilityChecker... accessChecks) {
             this.accessChecks = accessChecks;
             return this;
         }
 
-        public SuchszenarioBuilder setGoalPred(IGoalPredicate goalPred) {
+        private SuchszenarioBuilder setGoalPred(IGoalPredicate goalPred) {
             this.goalPred = goalPred;
             return this;
         }
 
-        public SuchszenarioBuilder setHeuristicFuncs(IHeuristicFunction... heuristicFuncs) {
+        private SuchszenarioBuilder setHeuristicFuncs(IHeuristicFunction... heuristicFuncs) {
             this.heuristicFuncs = heuristicFuncs;
             return this;
         }
 
-        public SuchszenarioBuilder setIsStateProblem(boolean isStateProblem) {
-            this.isStateProblem = isStateProblem;
+        private SuchszenarioBuilder setStateProblem(boolean stateProblem) {
+            this.stateProblem = stateProblem;
             return this;
         }
 
-        public SuchszenarioBuilder setCallbackFuncs(ICallbackFunction... callbackFuncs) {
+        private SuchszenarioBuilder setCallbackFuncs(ICallbackFunction... callbackFuncs) {
             this.callbackFuncs = callbackFuncs;
             return this;
         }
 
-        public Suchszenario createSuchszenario() {
+        public Suchszenario build() {
             if (accessChecks == null || accessChecks.length == 0) {
                 throw new IllegalArgumentException("Missing " + IAccessibilityChecker.class.getSimpleName());
             }
@@ -56,8 +56,8 @@ public class Suchszenario {
         }
     }
 
-    public Suchszenario(SuchszenarioBuilder b) {
-        this.isStateProblem = b.isStateProblem;
+    private Suchszenario(SuchszenarioBuilder b) {
+        this.stateProblem = b.stateProblem;
         this.accessChecks = b.accessChecks;
         this.goalPred = b.goalPred;
         this.heuristicFuncs = b.heuristicFuncs;
@@ -69,24 +69,24 @@ public class Suchszenario {
                 .setAccessChecks(Zugangsfilter.noWall())
                 .setGoalPred(Zielfunktionen.allDotsEaten())
                 .setHeuristicFuncs(Heuristikfunktionen.remainingDots())
-                .createSuchszenario();
+                .build();
     }
 
     public static Suchszenario findDestination(int goalX, int goalY) {
         return new SuchszenarioBuilder()
-                .setIsStateProblem(false)
+                .setStateProblem(false)
                 .setAccessChecks(Zugangsfilter.safeToWalkOn())
                 .setGoalPred(Zielfunktionen.reachedDestination(goalX, goalY))
                 .setHeuristicFuncs(Heuristikfunktionen.manhattanToTarget(goalX, goalY))
-                .createSuchszenario();
+                .build();
     }
 
     public static Suchszenario locateDeadEndExit() {
         return new SuchszenarioBuilder()
-                .setIsStateProblem(false)
+                .setStateProblem(false)
                 .setAccessChecks(Zugangsfilter.noWall())
                 .setGoalPred(node -> Sackgassen.deadEndDepth[node.getPosX()][node.getPosY()] == 0)
-                .createSuchszenario();
+                .build();
     }
 
     // region getter
@@ -107,7 +107,7 @@ public class Suchszenario {
     }
 
     public boolean isStateProblem() {
-        return isStateProblem;
+        return stateProblem;
     }
     // endregion
 

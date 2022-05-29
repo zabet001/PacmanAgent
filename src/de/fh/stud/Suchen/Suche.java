@@ -47,7 +47,7 @@ public class Suche {
         else {
             Suche.searchRunning = true;
         }
-        this.displayResults = b.display;
+        this.displayResults = b.displayResults;
         this.printResults = b.printResults;
 
         this.stateSearch = b.stateSearch;
@@ -57,13 +57,20 @@ public class Suche {
         this.callbackFuncs = b.callbackFuncs;
     }
 
+    // TODO: Wie kriegt man diese Redundanz raus? (orimitive datentypen koennen nicht in generics verwendet werden)
     public Knoten start(PacmanTileType[][] world, int posX, int posY, SearchStrategy strategy) {
-        return start(MyUtil.createByteView(world), posX, posY, strategy);
+        List<Knoten> ret = start(world, posX, posY, strategy, 1);
+        return ret.size() > 0 ? ret.get(0) : null;
     }
 
     public Knoten start(byte[][] world, int posX, int posY, SearchStrategy strategy) {
         List<Knoten> ret = start(world, posX, posY, strategy, 1);
         return ret.size() > 0 ? ret.get(0) : null;
+    }
+
+    public List<Knoten> start(PacmanTileType[][] world, int posX, int posY, SearchStrategy strategy,
+                              int solutionLimit) {
+        return start(MyUtil.createByteView(world), posX, posY, strategy, solutionLimit);
     }
 
     public List<Knoten> start(byte[][] world, int posX, int posY, SearchStrategy strategy, int solutionLimit) {
@@ -173,7 +180,7 @@ public class Suche {
     }
 
     public static final class Builder {
-        private boolean display = false;
+        private boolean displayResults = false;
         private boolean printResults = false;
 
         private boolean stateSearch = true;
@@ -200,22 +207,22 @@ public class Suche {
             if (goalPred == null) {
                 goalPred = node -> false;
             }
-            if (heuristicFuncs == null) {
+            if (heuristicFuncs == null || heuristicFuncs.length == 0) {
                 heuristicFuncs = new IHeuristicFunction[]{node -> 0};
             }
-            if (callbackFuncs == null) {
+            if (callbackFuncs == null || callbackFuncs.length == 0) {
                 callbackFuncs = new ICallbackFunction[]{expCand -> {}};
             }
             return new Suche(this);
         }
 
-        public Builder displayResults(boolean showResults) {
-            this.display = showResults;
+        public Builder displayResults(boolean displayResultsResults) {
+            this.displayResults = displayResultsResults;
             return this;
         }
 
-        public Builder printResults(boolean printAvgRuntime) {
-            this.printResults = printAvgRuntime;
+        public Builder printResults(boolean printResults) {
+            this.printResults = printResults;
             return this;
         }
 

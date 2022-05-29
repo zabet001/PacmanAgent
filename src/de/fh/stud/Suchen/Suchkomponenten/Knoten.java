@@ -18,13 +18,11 @@ public class Knoten {
 
     public static final byte[][] NEIGHBOUR_POS = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
     private static final short COST_LIMIT = 1000;
-
-    public byte nextTargetX, nextTargetY;
-
     private final Knoten pred;
     private final byte[][] view;
     private byte posX, posY;
     private final short cost;
+    public byte nextTargetX, nextTargetY;
 
     private final short remainingDots;
     // TODO Idee: Zusatzinformationen fuer Knoten (dotsEaten, powerPillTimer etc.) in Extra-Objekt speichern
